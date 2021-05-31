@@ -4,6 +4,7 @@ import org.neo4j.springframework.data.core.schema.*;
 import org.nistagram.contentmicroservice.data.model.Location;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Node("Content")
@@ -14,9 +15,11 @@ public abstract class Content {
     @Property("tags")
     private List<String> tags;
     @Property("date")
-    private Calendar date;
+    private Date date;
     @Relationship(type = "LOCATED", direction = Relationship.Direction.INCOMING)
     private Location location;
+    @Property("paths")
+    private List<String> paths;
 
     public Long getId() {
         return id;
@@ -34,11 +37,11 @@ public abstract class Content {
         this.tags = tags;
     }
 
-    public Calendar getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -48,5 +51,13 @@ public abstract class Content {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public List<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(List<String> paths) {
+        this.paths = paths;
     }
 }
