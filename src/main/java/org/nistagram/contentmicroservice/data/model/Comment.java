@@ -5,7 +5,7 @@ import org.neo4j.springframework.data.core.schema.Id;
 import org.neo4j.springframework.data.core.schema.Property;
 import org.neo4j.springframework.data.core.schema.RelationshipProperties;
 
-import java.util.Calendar;
+import java.util.Date;
 
 @RelationshipProperties()
 public class Comment {
@@ -15,12 +15,12 @@ public class Comment {
     @Property("text")
     private String text;
     @Property("Date")
-    private Calendar date;
+    private Date date;
 
     public Comment() {
     }
 
-    public Comment(Long id, String text, Calendar date) {
+    public Comment(Long id, String text, Date date) {
         this.id = id;
         this.text = text;
         this.date = date;
@@ -42,11 +42,11 @@ public class Comment {
         this.text = text;
     }
 
-    public Calendar tDate() {
+    public Date tDate() {
         return date;
     }
 
-    public void setDate(Calendar date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 }

@@ -1,7 +1,9 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
+import org.neo4j.springframework.data.core.schema.Node;
 import org.neo4j.springframework.data.core.schema.Property;
 
+@Node("Story")
 public class Story extends Content{
     @Property("path")
     private String path;
