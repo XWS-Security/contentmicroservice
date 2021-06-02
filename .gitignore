@@ -31,4 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### File system ###
 src/main/resources/images
+
+### Certificates ###
+certificates
