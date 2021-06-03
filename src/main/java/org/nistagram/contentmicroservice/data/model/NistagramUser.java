@@ -1,14 +1,10 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.neo4j.springframework.data.core.schema.Id;
-import org.neo4j.springframework.data.core.schema.Node;
-import org.neo4j.springframework.data.core.schema.Relationship;
+import org.neo4j.springframework.data.core.schema.*;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Node("NistagramUser")
@@ -27,15 +23,22 @@ public class NistagramUser {
     private List<Content> content;
     private String profilePictureName;
     private String about;
+    @Property("private")
+    private Boolean profilePrivate;
 
     public List<Post> getPosts() {
-        var posts = (List<Post>)(List<?>) getContent()
-                .stream().filter(p->p.getClass().equals(Post.class)).collect(Collectors.toList());
+        var posts = (List<Post>) (List<?>) getContent()
+                .stream().filter(p -> p.getClass().equals(Post.class)).collect(Collectors.toList());
         posts.sort(Comparator.comparing(Content::getDate));
         return posts;
     }
 
     public NistagramUser() {
+        this.closeFriends = new ArrayList<>();
+        this.subscribedUsers = new ArrayList<>();
+        this.savedContent = new ArrayList<>();
+        this.reportedComments = new HashMap<>();
+        this.content = new ArrayList<>();
     }
 
     public NistagramUser(String username, List<NistagramUser> closeFriends, List<NistagramUser> subscribedUsers, List<NistagramUser> savedContent, Map<Content, Report> reportedComments, List<Content> content, String profilePictureName, String about) {
@@ -111,5 +114,13 @@ public class NistagramUser {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public Boolean getProfilePrivate() {
+        return profilePrivate;
+    }
+
+    public void setProfilePrivate(Boolean profilePrivate) {
+        this.profilePrivate = profilePrivate;
     }
 }
