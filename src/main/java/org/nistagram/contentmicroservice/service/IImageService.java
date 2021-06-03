@@ -1,7 +1,9 @@
 package org.nistagram.contentmicroservice.service;
 
-import java.io.File;
+import org.nistagram.contentmicroservice.data.dto.MediaFileDto;
+
+import java.io.IOException;
 
 public interface IImageService {
-   File getImage(String name);
+    MediaFileDto getImage(String name) throws IOException;
 }

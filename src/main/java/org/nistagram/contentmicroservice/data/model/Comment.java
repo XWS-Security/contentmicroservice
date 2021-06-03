@@ -1,9 +1,6 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.neo4j.springframework.data.core.schema.GeneratedValue;
-import org.neo4j.springframework.data.core.schema.Id;
-import org.neo4j.springframework.data.core.schema.Property;
-import org.neo4j.springframework.data.core.schema.RelationshipProperties;
+import org.neo4j.springframework.data.core.schema.*;
 
 import java.util.Date;
 
@@ -16,14 +13,17 @@ public class Comment {
     private String text;
     @Property("Date")
     private Date date;
+    @Relationship(type = "COMMENTATOR", direction = Relationship.Direction.INCOMING)
+    private NistagramUser user;
 
     public Comment() {
     }
 
-    public Comment(Long id, String text, Date date) {
+    public Comment(Long id, String text, Date date, NistagramUser user) {
         this.id = id;
         this.text = text;
         this.date = date;
+        this.user = user;
     }
 
     public Long getId() {
@@ -48,5 +48,17 @@ public class Comment {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public NistagramUser getUser() {
+        return user;
+    }
+
+    public void setUser(NistagramUser user) {
+        this.user = user;
     }
 }
