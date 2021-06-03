@@ -1,6 +1,8 @@
 package org.nistagram.contentmicroservice.data.dto;
 
-public class ProfileImageDto {
+import java.io.Serializable;
+
+public class ProfileImageDto implements Serializable {
     private String imagePath;
     private Long postId;
 
