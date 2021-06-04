@@ -5,14 +5,16 @@ import org.nistagram.contentmicroservice.data.dto.PostDto;
 import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IPostService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -20,6 +22,9 @@ import java.util.List;
 public class PostController {
 
     private final IPostService postService;
+
+    @Value("${PROJECT_PATH}")
+    private String project_path;
 
     public PostController(IPostService postService) {
         this.postService = postService;
@@ -63,6 +68,25 @@ public class PostController {
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/uploadContent")
+    public ResponseEntity<String> uploadContent(@RequestParam("photos") List<MultipartFile> files) {
+        System.out.println(project_path);
+        Path path = Paths.get(project_path);
+        files.forEach(file -> {
+            if (file.isEmpty()) {
+            //    throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
+            }
+            try {
+                System.out.println(file.getOriginalFilename());
+                Files.copy(file.getInputStream(), path.resolve(file.getOriginalFilename()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
