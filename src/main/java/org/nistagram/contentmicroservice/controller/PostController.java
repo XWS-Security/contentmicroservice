@@ -2,6 +2,7 @@ package org.nistagram.contentmicroservice.controller;
 
 import org.nistagram.contentmicroservice.data.dto.CommentDto;
 import org.nistagram.contentmicroservice.data.dto.PostDto;
+import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,6 @@ public class PostController {
             var list = postService.getImageNames(id);
             return ResponseEntity.ok().body(list);
         } catch (NotFoundException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -41,7 +41,6 @@ public class PostController {
             var comment = postService.getComment(id);
             return ResponseEntity.ok().body(comment);
         } catch (NotFoundException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -52,8 +51,18 @@ public class PostController {
             var post = postService.getPostInfo(id);
             return ResponseEntity.ok().body(post);
         } catch (NotFoundException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("user/{id}")
+    public ResponseEntity<PostsUserDto> getPostsUser(@PathVariable Long id) {
+        try {
+            var post = postService.getPostsUser(id);
+            return ResponseEntity.ok().body(post);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
