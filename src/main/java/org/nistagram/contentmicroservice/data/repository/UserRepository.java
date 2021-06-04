@@ -9,4 +9,7 @@ public interface UserRepository extends CrudRepository<NistagramUser, String> {
 
     @Query("MATCH (p:NistagramUser) WHERE p.username = $0 SET p.username = $1, p.private = $2 RETURN p")
     NistagramUser updateProperties(String oldUsername, String username, boolean profilePrivate);
+
+    @Query("MATCH(p:Content)-[c:CONTENTS]->(n:NistagramUser) WHERE id(p)=$0 return n")
+    NistagramUser findByContentContaining(Long id);
 }

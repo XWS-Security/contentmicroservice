@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileController {
 
     private final IProfileService profileService;
@@ -29,7 +29,7 @@ public class ProfileController {
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<ProfileInfoDto> getUserInfo(@PathVariable String id) {
         try {
             var dtos = profileService.getUserInfo(id);
