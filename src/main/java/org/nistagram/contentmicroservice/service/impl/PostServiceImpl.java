@@ -16,6 +16,7 @@ import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -95,7 +96,6 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public void createPost(CreatePostDto postDto, List<MultipartFile> files) {
-        // TODO: Get logged user from token.
         Post post = new Post();
         long postId = ThreadLocalRandom.current().nextLong(100000);
         List<String> paths = new ArrayList<>();
@@ -120,10 +120,9 @@ public class PostServiceImpl implements IPostService {
         post.setLocation(locationRepository.findByName(postDto.getLocation()));
         postRepository.save(post);
 
-        NistagramUser user = userRepository.findByUsername("_cvjeticaninLazo98");
+        NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Content> userContent = user.getContent();
         userContent.add(post);
-
         userRepository.save(user);
     }
 
