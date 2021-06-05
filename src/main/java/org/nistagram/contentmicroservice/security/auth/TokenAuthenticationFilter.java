@@ -25,14 +25,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        System.out.println("DO FILTER INTERNAL");
         String username;
         String authToken = tokenUtils.getToken(request);
-        System.out.println("TOKEN: " + authToken);
 
         if (authToken != null) {
             username = tokenUtils.getUsernameFromToken(authToken);
-            System.out.println("Username from token: " + username);
 
             if (username != null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
