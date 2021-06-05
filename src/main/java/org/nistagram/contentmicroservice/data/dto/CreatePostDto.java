@@ -11,16 +11,18 @@ public class CreatePostDto {
     private List<String> tags;
     private Date date;
     private String about;
+    private String location;
 
     public CreatePostDto() {
 
     }
 
-    public CreatePostDto(List<MultipartFile> files, List<String> tags, Date date, String about) {
+    public CreatePostDto(List<MultipartFile> files, List<String> tags, Date date, String about, String location) {
         this.files = files;
         this.tags = tags;
         this.date = date;
         this.about = about;
+        this.location = location;
     }
 
     public List<MultipartFile> getFiles() {
@@ -53,5 +55,13 @@ public class CreatePostDto {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

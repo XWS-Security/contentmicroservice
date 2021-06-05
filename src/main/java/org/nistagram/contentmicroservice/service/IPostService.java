@@ -2,6 +2,7 @@ package org.nistagram.contentmicroservice.service;
 
 import org.nistagram.contentmicroservice.data.dto.CommentDto;
 import org.nistagram.contentmicroservice.data.dto.CreatePostDto;
+import org.nistagram.contentmicroservice.data.dto.LocationDto;
 import org.nistagram.contentmicroservice.data.dto.PostDto;
 import org.springframework.web.multipart.MultipartFile;
 import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
@@ -19,4 +20,6 @@ public interface IPostService {
     PostsUserDto getPostsUser(Long id);
 
     void createPost(CreatePostDto postDto, List<MultipartFile> files) throws SSLException;
+
+    List<LocationDto> getAllLocations();
 }
