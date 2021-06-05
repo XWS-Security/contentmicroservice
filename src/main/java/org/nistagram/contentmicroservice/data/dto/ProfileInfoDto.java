@@ -7,14 +7,24 @@ public class ProfileInfoDto implements Serializable {
     private List<ProfileImageDto> images;
     private String about;
     private String profilePictureName;
+    private boolean hasStories;
 
-    public ProfileInfoDto(List<ProfileImageDto> images, String about, String profilePictureName) {
+    public ProfileInfoDto(List<ProfileImageDto> images, String about, String profilePictureName, boolean hasStories) {
         this.images = images;
         this.about = about;
         this.profilePictureName = profilePictureName;
+        this.hasStories = hasStories;
     }
 
     public ProfileInfoDto() {
+    }
+
+    public boolean isHasStories() {
+        return hasStories;
+    }
+
+    public void setHasStories(boolean hasStories) {
+        this.hasStories = hasStories;
     }
 
     public List<ProfileImageDto> getImages() {

@@ -15,4 +15,28 @@ public class Story extends Content{
     public Story() {
         super();
     }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public boolean isOnlyCloseFriends() {
+        return onlyCloseFriends;
+    }
+
+    public void setOnlyCloseFriends(boolean onlyCloseFriends) {
+        this.onlyCloseFriends = onlyCloseFriends;
+    }
+
+    public boolean isHighlights() {
+        return highlights;
+    }
+
+    public void setHighlights(boolean highlights) {
+        this.highlights = highlights;
+    }
 }
