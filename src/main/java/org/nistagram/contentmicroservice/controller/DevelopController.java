@@ -83,6 +83,12 @@ public class DevelopController {
         tags.add("#VSCO");
         tags.add("#VSCO_BALCAN");
 
+        post1.setId(1L);
+        post2.setId(2L);
+        post3.setId(3L);
+        post4.setId(4L);
+        post5.setId(5L);
+
         post1.setPaths(paths1);
         post2.setPaths(paths2);
         post3.setPaths(paths3);
@@ -161,10 +167,7 @@ public class DevelopController {
         commentRepository.save(comment1);
         commentRepository.save(comment2);
         commentRepository.save(comment3);
-
-
         locationRepository.save(location1);
-
 
         var comments1 = new ArrayList<Comment>();
         comments1.add(comment1);

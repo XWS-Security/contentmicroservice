@@ -5,7 +5,12 @@ import org.nistagram.contentmicroservice.data.dto.CreatePostDto;
 import org.nistagram.contentmicroservice.data.dto.LocationDto;
 import org.nistagram.contentmicroservice.data.dto.PostDto;
 import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
+import org.nistagram.contentmicroservice.data.model.Location;
+import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.content.Content;
+import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.CommentRepository;
+import org.nistagram.contentmicroservice.data.repository.LocationRepository;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
@@ -15,14 +20,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.net.ssl.SSLException;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class PostServiceImpl implements IPostService {
@@ -30,6 +32,7 @@ public class PostServiceImpl implements IPostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final LocationRepository locationRepository;
 
     @Value("${ACCOUNT}")
     private String accountMicroserviceURI;
@@ -38,43 +41,40 @@ public class PostServiceImpl implements IPostService {
     @Value("${PROJECT_PATH}")
     private String project_path;
 
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, UserRepository userRepository) {
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
+        this.locationRepository = locationRepository;
         this.userRepository = userRepository;
     }
 
     @Override
     public List<String> getImageNames(Long id) {
-        var optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new NotFoundException(id);
-        } else {
-            var post = optionalPost.get();
-            return post.getPaths();
-        }
+        var optionalPost = postRepository.findByIdentifier(id);
+
+        var post = optionalPost;
+        return post.getPaths();
     }
 
     @Override
     public PostDto getPostInfo(Long id) {
-        var optionalPost = postRepository.findById(id);
-        if (optionalPost.isEmpty()) {
-            throw new NotFoundException(id);
-        } else {
-            var post = optionalPost.get();
-            var location = new LocationDto(post.getLocation());
-            var tags = post.getTags();
-            var date = post.getDate();
-            var likes = post.getLikes().size();
-            var dislikes = post.getDislikes().size();
-            var comments = post.getComments();
-            var about = post.getAbout();
-            List<Long> commentIds = new ArrayList<>();
-            comments.forEach(comment -> commentIds.add(comment.getId()));
-            return new PostDto(location, tags, date, likes, dislikes, commentIds, about);
-        }
-    }
+        var optionalPost = postRepository.findByIdentifier(id);
 
+        System.out.println(optionalPost);
+
+        var post = optionalPost;
+        var location = new LocationDto(post.getLocation());
+        var tags = post.getTags();
+        var date = post.getDate();
+        var likes = post.getLikes().size();
+        var dislikes = post.getDislikes().size();
+        var comments = post.getComments();
+        var about = post.getAbout();
+        List<Long> commentIds = new ArrayList<>();
+        comments.forEach(comment -> commentIds.add(comment.getId()));
+        return new PostDto(location, tags, date, likes, dislikes, commentIds, about);
+
+    }
 
     @Override
     public CommentDto getComment(Long id) {
@@ -99,25 +99,48 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public void createPost(CreatePostDto postDto, List<MultipartFile> files) throws SSLException {
-
+    public void createPost(CreatePostDto postDto, List<MultipartFile> files) {
         // TODO: Get logged user from token.
-
-        String postUID = UUID.randomUUID().toString();
-        File f = new File(project_path + "/username" + "/" + "post" + "-" + postUID);
-        f.mkdirs();
-
-        Path postFolder = Paths.get(project_path + "/username" + "/" + "post" + "-" + postUID);
-
-        System.out.println(postDto.getAbout());
+        Post post = new Post();
+        long postId = ThreadLocalRandom.current().nextLong(100000);
+        List<String> paths = new ArrayList<>();
+        Path post_path = Paths.get(project_path);
 
         files.forEach(file -> {
             try {
-                System.out.println(file.getOriginalFilename());
-                Files.copy(file.getInputStream(), postFolder.resolve(UUID.randomUUID().toString()));
+                String extension = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
+                String random = UUID.randomUUID().toString() + "." + extension;
+                Files.copy(file.getInputStream(), post_path.resolve(random));
+                paths.add(random);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+
+        post.setPaths(paths);
+        post.setTags(postDto.getTags());
+        post.setAbout(postDto.getAbout());
+        post.setDate(Calendar.getInstance().getTime());
+        post.setId(postId);
+        post.setLocation(locationRepository.findByName(postDto.getLocation()));
+        postRepository.save(post);
+
+        NistagramUser user = userRepository.findByUsername("_cvjeticaninLazo98");
+        List<Content> userContent = user.getContent();
+        userContent.add(post);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<LocationDto> getAllLocations() {
+        ArrayList<Location> locations = (ArrayList<Location>) locationRepository.findAll();
+        ArrayList<LocationDto> locationDtos = new ArrayList<>();
+
+        locations.forEach(location -> {
+            locationDtos.add(new LocationDto(location));
+        });
+
+        return locationDtos;
     }
 }

@@ -6,6 +6,7 @@ import org.neo4j.springframework.data.core.schema.Relationship;
 import org.nistagram.contentmicroservice.data.model.Comment;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Node("Post")
@@ -20,6 +21,12 @@ public class Post extends Content {
     @Property("paths")
     private List<String> paths;
     private String about;
+
+    public Post() {
+        likes = new ArrayList<>();
+        dislikes = new ArrayList<>();
+        comments = new ArrayList<>();
+    }
 
     public String getAbout() {
         return about;
@@ -58,5 +65,15 @@ public class Post extends Content {
     }
     public void setPaths(List<String> paths) {
         this.paths = paths;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "likes=" + likes +
+                ", dislikes=" + dislikes +
+                ", comments=" + comments +
+                ", about='" + about + '\'' +
+                '}';
     }
 }

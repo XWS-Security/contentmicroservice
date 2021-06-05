@@ -1,6 +1,9 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
-import org.neo4j.springframework.data.core.schema.*;
+import org.neo4j.springframework.data.core.schema.Id;
+import org.neo4j.springframework.data.core.schema.Node;
+import org.neo4j.springframework.data.core.schema.Property;
+import org.neo4j.springframework.data.core.schema.Relationship;
 import org.nistagram.contentmicroservice.data.model.Location;
 
 import java.util.Date;
@@ -9,7 +12,6 @@ import java.util.List;
 @Node("Content")
 public abstract class Content {
     @Id
-    @GeneratedValue
     private Long id;
     @Property("tags")
     private List<String> tags;
@@ -48,5 +50,15 @@ public abstract class Content {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "Content{" +
+                "id=" + id +
+                ", tags=" + tags +
+                ", date=" + date +
+                ", location=" + location +
+                '}';
     }
 }

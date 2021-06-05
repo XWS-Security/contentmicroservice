@@ -2,6 +2,7 @@ package org.nistagram.contentmicroservice.controller;
 
 import org.nistagram.contentmicroservice.data.dto.CommentDto;
 import org.nistagram.contentmicroservice.data.dto.CreatePostDto;
+import org.nistagram.contentmicroservice.data.dto.LocationDto;
 import org.nistagram.contentmicroservice.data.dto.PostDto;
 import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
@@ -47,6 +48,11 @@ public class PostController {
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping("/locations")
+    public ResponseEntity<List<LocationDto>> getLocations() {
+        return new ResponseEntity<>(postService.getAllLocations(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
