@@ -5,7 +5,6 @@ import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.model.content.Story;
 
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
