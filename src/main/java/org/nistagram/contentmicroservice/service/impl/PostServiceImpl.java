@@ -14,7 +14,6 @@ import org.nistagram.contentmicroservice.data.repository.LocationRepository;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
-import org.nistagram.contentmicroservice.keystore.Keystore;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -33,10 +32,6 @@ public class PostServiceImpl implements IPostService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
-
-    @Value("${ACCOUNT}")
-    private String accountMicroserviceURI;
-    private final Keystore keystore = new Keystore();
 
     @Value("${PROJECT_PATH}")
     private String project_path;
