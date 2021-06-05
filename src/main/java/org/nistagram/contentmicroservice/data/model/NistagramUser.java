@@ -5,13 +5,12 @@ import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.model.content.Story;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Node("NistagramUser")
-public class NistagramUser {
-    @Id
-    private String username;
+public class NistagramUser extends User {
     @Relationship(type = "IS_CLOSE_FRIEND", direction = Relationship.Direction.INCOMING)
     private List<NistagramUser> closeFriends;
     @Relationship(type = "SUBSCRIBED", direction = Relationship.Direction.INCOMING)
@@ -49,23 +48,13 @@ public class NistagramUser {
         this.content = new ArrayList<>();
     }
 
-    public NistagramUser(String username, List<NistagramUser> closeFriends, List<NistagramUser> subscribedUsers, List<NistagramUser> savedContent, Map<Content, Report> reportedComments, List<Content> content, String profilePictureName, String about) {
-        this.username = username;
-        this.closeFriends = closeFriends;
-        this.subscribedUsers = subscribedUsers;
-        this.savedContent = savedContent;
-        this.reportedComments = reportedComments;
-        this.content = content;
-        this.profilePictureName = profilePictureName;
-        this.about = about;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+    public NistagramUser(String username, boolean enabled, Date lastPasswordResetDate, List<Role> roles) {
+        super(username, enabled, lastPasswordResetDate, roles);
+        this.closeFriends = new ArrayList<>();
+        this.subscribedUsers = new ArrayList<>();
+        this.savedContent = new ArrayList<>();
+        this.reportedComments = new HashMap<>();
+        this.content = new ArrayList<>();
     }
 
     public List<NistagramUser> getCloseFriends() {
