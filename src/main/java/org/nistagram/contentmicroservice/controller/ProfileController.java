@@ -43,6 +43,7 @@ public class ProfileController {
     @PostMapping("/createNistagramUser")
     public ResponseEntity<String> createUser(@RequestBody @Valid UserDto userDto) {
         try {
+            System.out.println("Creating user...");
             userService.saveUser(modelMapper.map(userDto, NistagramUser.class));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UsernameAlreadyExistsException e) {

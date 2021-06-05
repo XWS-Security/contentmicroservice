@@ -1,83 +1,48 @@
 package org.nistagram.contentmicroservice.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.neo4j.springframework.data.core.schema.*;
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.*;
 
-@Entity
-@Table(name = "gram_user")
-public class User implements UserDetails {
-    private transient String administrationRole = "";
+@Node("AuthUser")
+public abstract class User implements UserDetails {
+    @Transient
+    private final String administrationRole = "NISTAGRAM_USER_ROLE";
 
     @Id
-    @SequenceGenerator(name = "user_sequence_generator", sequenceName = "user_sequence", initialValue = 100)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence_generator")
-    @Column(name = "id", unique = true)
-    protected Long id;
+    private String username;
 
-    @Column(name = "email", unique = true)
-    protected String email;
+    @Property(name = "enabled")
+    private boolean enabled = false;
 
-    @JsonIgnore
-    @Column(name = "password")
-    protected String password;
+    @Property(name = "lastPasswordResetDate")
+    private Date lastPasswordResetDate;
 
-    @Column(name = "enabled")
-    protected boolean enabled = false;
-
-    @Column(name = "nistagramUsername", unique = true)
-    private String nistagramUsername;
-
-    @Column(name = "last_password_reset_date")
-    protected Timestamp lastPasswordResetDate;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_authority",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
+    @Relationship(type = "HAS_ROLE", direction = Relationship.Direction.INCOMING)
     private List<Role> roles;
 
     protected User() {
     }
 
-    public String getNistagramUsername() {
-        return nistagramUsername;
-    }
-
-    public void setNistagramUsername(String nistagramUsername) {
-        this.nistagramUsername = nistagramUsername;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    protected User(String username, boolean enabled, Date lastPasswordResetDate, List<Role> roles) {
+        this.username = username;
+        this.enabled = enabled;
+        this.lastPasswordResetDate = lastPasswordResetDate;
+        this.roles = roles;
     }
 
     @Override
-    public String getPassword() {
-        return password;
+    public String getUsername() {
+        return username;
     }
 
-    public void setPassword(String password) {
-        Timestamp now = new Timestamp(new Date().getTime());
-        this.setLastPasswordResetDate(now);
-        this.password = password;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -97,38 +62,28 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public void setAdministrationRole(String administrationRole) {
-        this.administrationRole = administrationRole;
-    }
-
     public String getAdministrationRole() {
         return this.administrationRole;
     }
 
-    public void Enable() {
-        this.enabled = true;
-    }
-
-    public void Disable() {
-        this.enabled = false;
-    }
-
-    public Timestamp getLastPasswordResetDate() {
+    public Date getLastPasswordResetDate() {
         return lastPasswordResetDate;
     }
 
-    public void setLastPasswordResetDate(Timestamp lastPasswordResetDate) {
+    public void setLastPasswordResetDate(Date lastPasswordResetDate) {
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getGrantedAuthorities();
     }
 
+    @JsonIgnore
     @Override
-    public String getUsername() {
-        return email;
+    public String getPassword() {
+        return "";
     }
 
     @JsonIgnore
@@ -152,9 +107,7 @@ public class User implements UserDetails {
     private List<GrantedAuthority> getGrantedAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (Role role : this.getRoles()) {
-            for (Privilege privilege : role.getPrivileges()) {
-                authorities.add(new SimpleGrantedAuthority(privilege.getName()));
-            }
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return authorities;
     }

@@ -2,24 +2,32 @@ package org.nistagram.contentmicroservice.service.impl;
 
 import org.nistagram.contentmicroservice.data.dto.EditUserDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.Role;
+import org.nistagram.contentmicroservice.data.repository.RoleRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.UserDoesNotExistException;
 import org.nistagram.contentmicroservice.exceptions.UsernameAlreadyExistsException;
 import org.nistagram.contentmicroservice.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
     public void saveUser(NistagramUser user) {
         if (isUsernameAvailable(user.getUsername())) {
+            List<Role> roles = roleRepository.findByName(user.getAdministrationRole());
+            user.setRoles(roles);
             userRepository.save(user);
         } else {
             throw new UsernameAlreadyExistsException();
