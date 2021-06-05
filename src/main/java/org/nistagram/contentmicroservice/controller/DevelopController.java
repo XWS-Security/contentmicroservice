@@ -52,10 +52,16 @@ public class DevelopController {
         var post3 = new Post();
         var post4 = new Post();
         var post5 = new Post();
+
         var story1 = new Story();
         var story2 = new Story();
         var story3 = new Story();
         var story4 = new Story();
+
+        story1.setId(1L);
+        story2.setId(2L);
+        story3.setId(3L);
+        story4.setId(4L);
 
         var paths1 = new ArrayList<String>();
         paths1.add("image1.jpg");
