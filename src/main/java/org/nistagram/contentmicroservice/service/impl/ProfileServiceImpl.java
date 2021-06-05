@@ -33,6 +33,10 @@ public class ProfileServiceImpl implements IProfileService {
     @Override
     public ProfileInfoDto getUserInfo(String id) {
         NistagramUser user = userRepository.findById(id).get();
-        return new ProfileInfoDto(getPathsOfFirstImagesInPosts(user),user.getAbout(), user.getProfilePictureName());
+        var hasStories = false;
+        if(user.getStories().size()>0){
+           hasStories=true;
+        }
+        return new ProfileInfoDto(getPathsOfFirstImagesInPosts(user),user.getAbout(), user.getProfilePictureName(), hasStories);
     }
 }

@@ -3,6 +3,7 @@ package org.nistagram.contentmicroservice.data.model;
 import org.neo4j.springframework.data.core.schema.*;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
+import org.nistagram.contentmicroservice.data.model.content.Story;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,13 @@ public class NistagramUser {
                 .stream().filter(p -> p.getClass().equals(Post.class)).collect(Collectors.toList());
         posts.sort(Comparator.comparing(Content::getDate));
         return posts;
+    }
+
+    public List<Story> getStories() {
+        var stories = (List<Story>) (List<?>) getContent()
+                .stream().filter(s -> s.getClass().equals(Story.class)).collect(Collectors.toList());
+        stories.sort(Comparator.comparing(Content::getDate));
+        return stories;
     }
 
     public NistagramUser() {

@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
 import org.neo4j.springframework.data.core.schema.Node;
+import org.neo4j.springframework.data.core.schema.Property;
 import org.neo4j.springframework.data.core.schema.Relationship;
 import org.nistagram.contentmicroservice.data.model.Comment;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
@@ -16,6 +17,8 @@ public class Post extends Content {
     private List<NistagramUser> dislikes;
     @Relationship(type = "COMMENTS", direction = Relationship.Direction.INCOMING)
     private List<Comment> comments;
+    @Property("paths")
+    private List<String> paths;
     private String about;
 
     public String getAbout() {
@@ -48,5 +51,12 @@ public class Post extends Content {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<String> getPaths() {
+        return paths;
+    }
+    public void setPaths(List<String> paths) {
+        this.paths = paths;
     }
 }
