@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.controller;
 
 import org.nistagram.contentmicroservice.data.dto.CommentDto;
+import org.nistagram.contentmicroservice.data.dto.CreatePostDto;
 import org.nistagram.contentmicroservice.data.dto.PostDto;
 import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
@@ -12,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.net.ssl.SSLException;
 import java.util.List;
 
 @RestController
@@ -70,22 +69,9 @@ public class PostController {
         }
     }
 
-    @PostMapping("/uploadContent")
-    public ResponseEntity<String> uploadContent(@RequestParam("photos") List<MultipartFile> files) {
-        System.out.println(project_path);
-        Path path = Paths.get(project_path);
-        files.forEach(file -> {
-            if (file.isEmpty()) {
-            //    throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
-            }
-            try {
-                System.out.println(file.getOriginalFilename());
-                Files.copy(file.getInputStream(), path.resolve(file.getOriginalFilename()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
+    @PostMapping(path = "/uploadContent", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> uploadContent(@RequestPart("obj") CreatePostDto dto, @RequestPart("photos") List<MultipartFile> files) throws SSLException {
+        postService.createPost(dto, files);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
