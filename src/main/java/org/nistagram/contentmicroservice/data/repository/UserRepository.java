@@ -21,4 +21,12 @@ public interface UserRepository extends CrudRepository<NistagramUser, String> {
     @Query("MATCH(p:Post)<-[c:DISLIKES]-(n:NistagramUser) WHERE p.id=$0 return n")
     List<NistagramUser> findAllWhoDislikedPost(long id);
 
+    @Query("MATCH(u:NistagramUser)<-[c:IS_CLOSE_FRIEND]-(n:NistagramUser) WHERE u.username=$0 return n")
+    List<NistagramUser> findAllCloseFriends(String username);
+
+    @Query("MATCH(u:NistagramUser)<-[c:IS_CLOSE_FRIEND]-(cf:NistagramUser) WHERE u.username=$0 AND cf.username=$1 delete c")
+    List<NistagramUser> removeCloseFriend(String username,String friendUsername);
+
+    @Query("MATCH(u:NistagramUser), (cf:NistagramUser) WHERE u.username=$0 AND cf.username=$1 CREATE (cf)-[:IS_CLOSE_FRIEND]->(u)")
+    List<NistagramUser> addCloseFriend(String username,String friendUsername);
 }
