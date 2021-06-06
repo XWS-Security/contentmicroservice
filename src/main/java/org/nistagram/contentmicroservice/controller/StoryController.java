@@ -24,9 +24,20 @@ public class StoryController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<List<StoryDto>> getStory(@PathVariable String username) {
+    public ResponseEntity<List<StoryDto>> getStories(@PathVariable String username) {
         try {
             var stories = storyService.getActiveUserStories(username);
+            return ResponseEntity.ok().body(stories);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/highlights/{username}")
+    public ResponseEntity<List<StoryDto>> getHighlights(@PathVariable String username) {
+        try {
+            var stories = storyService.getHighlights(username);
             return ResponseEntity.ok().body(stories);
         } catch (NotFoundException e) {
             e.printStackTrace();

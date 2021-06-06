@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface LocationRepository extends CrudRepository<Location, Long> {
     Location findByName(String name);
 
-    @Query("MATCH(l:Location)-[lt:LOCATED]->(s:Story) WHERE id(s) = $0 return l")
-    Location findByStory(Long id);
+    @Query("MATCH (n:Location)-[c:LOCATED]->(p:Content) WHERE p.id= $0 return n")
+    Location findByContent(Long id);
+
 }

@@ -58,10 +58,10 @@ public class DevelopController {
         var story3 = new Story();
         var story4 = new Story();
 
-        story1.setId(1L);
-        story2.setId(2L);
-        story3.setId(3L);
-        story4.setId(4L);
+        story1.setId(6L);
+        story2.setId(7L);
+        story3.setId(8L);
+        story4.setId(9L);
 
         var paths1 = new ArrayList<String>();
         paths1.add("image1.jpg");
@@ -185,7 +185,7 @@ public class DevelopController {
         var likes1 = new ArrayList<NistagramUser>();
         likes1.add(user2);
         post1.setComments(comments1);
-        //post1.setLocation(location1);
+        post1.setLocation(location1);
         post1.setTags(tags);
         post1.setLikes(likes1);
         post1.setAbout("Last night a Dj saved my life <3 !!!");

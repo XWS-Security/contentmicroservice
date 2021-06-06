@@ -25,12 +25,12 @@ public class ContentmicroserviceApplication {
         Role role = new Role("NISTAGRAM_USER_ROLE");
         List<Role> roles = new ArrayList<>();
         roles.add(role);
-        roleRepository.save(role);
+        //roleRepository.save(role);
 
         // create one user for testing
         UserRepository userRepository = (UserRepository) ctx.getBean("userRepository");
         Date timestamp = new Date();
         NistagramUser user = new NistagramUser("luka", true, timestamp, roles);
-        userRepository.save(user);
+        //userRepository.save(user);
     }
 }

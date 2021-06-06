@@ -20,10 +20,10 @@ public class ProfileServiceImpl implements IProfileService {
         this.userRepository = userRepository;
     }
 
-    private List<ProfileImageDto> getPathsOfFirstImagesInPosts(NistagramUser user){
+    private List<ProfileImageDto> getPathsOfFirstImagesInPosts(NistagramUser user) {
 
         var posts = user.getPosts();
-        var paths= new ArrayList<ProfileImageDto>();
+        var paths = new ArrayList<ProfileImageDto>();
         for (Post post : posts) {
             paths.add(new ProfileImageDto(post.getPaths().get(0), post.getId()));
         }
@@ -32,11 +32,13 @@ public class ProfileServiceImpl implements IProfileService {
 
     @Override
     public ProfileInfoDto getUserInfo(String id) {
-        NistagramUser user = userRepository.findById(id).get();
+        NistagramUser user = userRepository.findByUsername(id);
         var hasStories = false;
-        if(user.getStories().size()>0){
-           hasStories=true;
+        var stories = user.getStories();
+        if (stories.size() > 0) {
+            hasStories = true;
         }
-        return new ProfileInfoDto(getPathsOfFirstImagesInPosts(user),user.getAbout(), user.getProfilePictureName(), hasStories);
+        var hasHighlights = stories.stream().filter(story -> story.isHighlights()).count() > 0;
+        return new ProfileInfoDto(getPathsOfFirstImagesInPosts(user), user.getAbout(), user.getProfilePictureName(), hasStories, hasHighlights);
     }
 }
