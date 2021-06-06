@@ -7,6 +7,7 @@ import org.nistagram.contentmicroservice.service.IStoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +35,7 @@ public class StoryController {
         }
     }
 
-    //  @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
     @PostMapping(path = "/uploadContent", consumes = {"multipart/form-data"})
     public ResponseEntity<String> uploadContent(@RequestPart("obj") CreateStoryDto dto, @RequestPart("photos") List<MultipartFile> files) throws IOException {
         storyService.createStory(dto, files);

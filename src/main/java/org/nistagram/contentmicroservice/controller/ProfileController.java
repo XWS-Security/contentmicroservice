@@ -67,7 +67,7 @@ public class ProfileController {
         }
     }
 
-//    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
     @PostMapping(path = "/setPorfilePicture", consumes = {"multipart/form-data"})
     public ResponseEntity<String> setProfilePicture(@RequestPart("photos") List<MultipartFile> files) throws IOException {
         profileService.setProfilePicture(files);
