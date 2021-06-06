@@ -8,12 +8,14 @@ public class ProfileInfoDto implements Serializable {
     private String about;
     private String profilePictureName;
     private boolean hasStories;
+    private boolean hasHighlights;
 
-    public ProfileInfoDto(List<ProfileImageDto> images, String about, String profilePictureName, boolean hasStories) {
+    public ProfileInfoDto(List<ProfileImageDto> images, String about, String profilePictureName, boolean hasStories, boolean hasHighlights) {
         this.images = images;
         this.about = about;
         this.profilePictureName = profilePictureName;
         this.hasStories = hasStories;
+        this.hasHighlights = hasHighlights;
     }
 
     public ProfileInfoDto() {
@@ -49,5 +51,13 @@ public class ProfileInfoDto implements Serializable {
 
     public void setProfilePictureName(String profilePictureName) {
         this.profilePictureName = profilePictureName;
+    }
+
+    public boolean isHasHighlights() {
+        return hasHighlights;
+    }
+
+    public void setHasHighlights(boolean hasHighlights) {
+        this.hasHighlights = hasHighlights;
     }
 }

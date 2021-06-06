@@ -47,24 +47,23 @@ public class PostServiceImpl implements IPostService {
     @Override
     public List<String> getImageNames(Long id) {
         var optionalPost = postRepository.findByIdentifier(id);
-
         var post = optionalPost;
         return post.getPaths();
     }
 
     @Override
     public PostDto getPostInfo(Long id) {
-        var optionalPost = postRepository.findByIdentifier(id);
-
-        System.out.println(optionalPost);
-
-        var post = optionalPost;
-        var location = new LocationDto(post.getLocation());
+        var post = postRepository.findByIdentifier(id);
+        var l = locationRepository.findByContent(id);
+        LocationDto location;
+        if (l != null) {
+            location = new LocationDto(l);
+        } else location = null;
         var tags = post.getTags();
         var date = post.getDate();
-        var likes = post.getLikes().size();
-        var dislikes = post.getDislikes().size();
-        var comments = post.getComments();
+        var likes = userRepository.findAllWhoLikedPost(post.getId()).size();
+        var dislikes = userRepository.findAllWhoDislikedPost(post.getId()).size();
+        var comments = commentRepository.findByPost(post.getId());
         var about = post.getAbout();
         List<Long> commentIds = new ArrayList<>();
         comments.forEach(comment -> commentIds.add(comment.getId()));

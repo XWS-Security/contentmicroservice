@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IStoryService {
     List<StoryDto> getActiveUserStories(String username);
+
+    List<StoryDto> getHighlights(String username);
 }
