@@ -109,6 +109,7 @@ public class DevelopController {
         story1.setLocation(location1);
         story2.setPath("image1.jpg");
         story2.setHighlights(true);
+        story2.setOnlyCloseFriends(true);
         story3.setPath("image2.jpg");
         story4.setPath("image3.jpg");
 
@@ -200,7 +201,10 @@ public class DevelopController {
         storyRepository.save(story3);
         storyRepository.save(story4);
 
-        user1.setCloseFriends(new ArrayList<>());
+        var closeFriends = new ArrayList<NistagramUser>();
+        closeFriends.add(user2);
+
+        user1.setCloseFriends(closeFriends);
         user1.setReportedComments(new HashMap<>());
         user1.setSavedContent(new ArrayList<>());
         user1.setSubscribedUsers(new ArrayList<>());
