@@ -12,9 +12,13 @@ import org.nistagram.contentmicroservice.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,11 +43,9 @@ public class ProfileController {
         }
     }
 
-
     @PostMapping("/createNistagramUser")
     public ResponseEntity<String> createUser(@RequestBody @Valid UserDto userDto) {
         try {
-            System.out.println("Creating user...");
             userService.saveUser(modelMapper.map(userDto, NistagramUser.class));
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UsernameAlreadyExistsException e) {
@@ -63,5 +65,12 @@ public class ProfileController {
         } catch (Exception e) {
             return new ResponseEntity<>("Something went wrong.", HttpStatus.OK);
         }
+    }
+
+//    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    @PostMapping(path = "/setPorfilePicture", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> setProfilePicture(@RequestPart("photos") List<MultipartFile> files) throws IOException {
+        profileService.setProfilePicture(files);
+        return null;
     }
 }

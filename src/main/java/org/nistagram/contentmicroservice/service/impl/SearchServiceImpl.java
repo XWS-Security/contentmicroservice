@@ -3,6 +3,7 @@ package org.nistagram.contentmicroservice.service.impl;
 import org.nistagram.contentmicroservice.data.dto.ProfileImageDto;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.service.ISearchService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,6 +13,7 @@ public class SearchServiceImpl implements ISearchService {
 
     private final PostRepository postRepository;
 
+    @Autowired
     public SearchServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
     }

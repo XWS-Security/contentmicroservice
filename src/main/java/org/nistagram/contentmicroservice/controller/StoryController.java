@@ -1,16 +1,16 @@
 package org.nistagram.contentmicroservice.controller;
 
+import org.nistagram.contentmicroservice.data.dto.CreateStoryDto;
 import org.nistagram.contentmicroservice.data.dto.StoryDto;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IStoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -33,6 +33,14 @@ public class StoryController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    //  @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    @PostMapping(path = "/uploadContent", consumes = {"multipart/form-data"})
+    public ResponseEntity<String> uploadContent(@RequestPart("obj") CreateStoryDto dto, @RequestPart("photos") List<MultipartFile> files) throws IOException {
+        storyService.createStory(dto, files);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @GetMapping("/highlights/{username}")
     public ResponseEntity<List<StoryDto>> getHighlights(@PathVariable String username) {

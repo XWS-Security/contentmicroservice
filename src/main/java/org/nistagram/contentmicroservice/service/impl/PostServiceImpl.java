@@ -15,6 +15,7 @@ import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IPostService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class PostServiceImpl implements IPostService {
     @Value("${PROJECT_PATH}")
     private String project_path;
 
+    @Autowired
     public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
