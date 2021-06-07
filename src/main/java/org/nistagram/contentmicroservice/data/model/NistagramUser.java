@@ -15,7 +15,7 @@ public class NistagramUser extends User {
     @Relationship(type = "SUBSCRIBED", direction = Relationship.Direction.INCOMING)
     private List<NistagramUser> subscribedUsers;
     @Relationship(type = "SAVED", direction = Relationship.Direction.INCOMING)
-    private List<NistagramUser> savedContent;
+    private List<Post> savedContent;
     @Relationship(type = "REPORTED", direction = Relationship.Direction.INCOMING)
     private Map<Content, Report> reportedComments;
     @Relationship(type = "CONTENTS", direction = Relationship.Direction.INCOMING)
@@ -70,11 +70,11 @@ public class NistagramUser extends User {
         this.subscribedUsers = subscribedUsers;
     }
 
-    public List<NistagramUser> getSavedContent() {
+    public List<Post> getSavedContent() {
         return savedContent;
     }
 
-    public void setSavedContent(List<NistagramUser> savedContent) {
+    public void setSavedContent(List<Post> savedContent) {
         this.savedContent = savedContent;
     }
 

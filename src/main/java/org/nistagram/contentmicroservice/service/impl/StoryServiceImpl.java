@@ -57,8 +57,6 @@ public class StoryServiceImpl implements IStoryService {
             if (user == null) {
                 return false;
             }
-            System.out.println(user.getUsername());
-            System.out.println(storyOwner.getCloseFriends().size());
             return storyOwner.getUsername().equals(user.getUsername()) ||
                     storyOwner.getCloseFriends().stream().anyMatch(nistagramUser -> nistagramUser.getUsername().equals(user.getUsername()));
         } else {
