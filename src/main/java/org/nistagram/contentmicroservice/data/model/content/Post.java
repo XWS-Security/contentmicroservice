@@ -17,23 +17,23 @@ import java.util.List;
                 typeClass = StringArrayType.class
         )
 })
-@Entity
+@Entity()
 @DiscriminatorValue("POST")
 public class Post extends Content {
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "post_likes",
             joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<NistagramUser> likes;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "post_dislikes",
             joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<NistagramUser> dislikes;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "post_comment",
             joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "comment_id", referencedColumnName = "id"))
@@ -94,14 +94,6 @@ public class Post extends Content {
     public void setPaths(String[] paths) {
         this.paths = paths;
     }
-
-//    public List<String> getPaths() {
-//        return Arrays.asList(paths.clone());
-//    }
-//
-//    public void setPaths(List<String> paths) {
-//        this.paths = paths.toArray();
-//    }
 
     @Override
     public String toString() {

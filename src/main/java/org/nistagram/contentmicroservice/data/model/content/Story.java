@@ -5,7 +5,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
-@DiscriminatorValue("POST")
+@DiscriminatorValue("STORY")
 public class Story extends Content {
     @Column(name = "path")
     private String path;
