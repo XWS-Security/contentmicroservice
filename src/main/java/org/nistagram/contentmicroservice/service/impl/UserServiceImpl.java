@@ -45,8 +45,9 @@ public class UserServiceImpl implements UserService {
         if (!editUserDto.getOldUsername().equals(editUserDto.getUsername()) && !isUsernameAvailable(editUserDto.getUsername())) {
             throw new UsernameAlreadyExistsException();
         }
-
-        userRepository.updateProperties(loadedUser.getUsername(), editUserDto.getUsername(), editUserDto.isProfilePrivate());
+        loadedUser.setProfilePrivate(editUserDto.isProfilePrivate());
+        loadedUser.setUsername(editUserDto.getUsername());
+        userRepository.save(loadedUser);
     }
 
     private boolean isUsernameAvailable(String username) {

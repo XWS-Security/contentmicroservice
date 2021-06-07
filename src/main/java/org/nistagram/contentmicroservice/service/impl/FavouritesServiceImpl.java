@@ -4,6 +4,7 @@ import org.nistagram.contentmicroservice.data.dto.PostImageLinkDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.IFavouritesService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,11 +53,17 @@ public class FavouritesServiceImpl implements IFavouritesService {
         if (user == null) {
             throw new UserNotLogged();
         }
-        if (user.getSavedContent().stream().noneMatch(post -> post.getId().equals(postId))) {
-            userRepository.savePost(user.getUsername(), postId);
-        } else {
-            userRepository.removeSavedPost(user.getUsername(), postId);
+        var postOptional = postRepository.findById(postId);
+        if(postOptional.isEmpty()){
+            throw new NotFoundException();
         }
+        var post = postOptional.get();
+        if (user.getSavedContent().contains(post)) {
+            user.getSavedContent().remove(post);
+        } else {
+            user.getSavedContent().add(post);
+        }
+        userRepository.save(user);
     }
 
     private NistagramUser getCurrentlyLoggedUser() {

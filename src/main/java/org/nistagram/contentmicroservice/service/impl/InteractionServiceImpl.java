@@ -26,8 +26,7 @@ public class InteractionServiceImpl implements IInteractionService {
             return CloseFriends.USER_UNSIGNED;
         if(loggedUser.getUsername().equals(userName))
             return CloseFriends.SAME_USER;
-        var user = userRepository.findByUsername(userName);
-        if(userRepository.findAllCloseFriends(loggedUser.getUsername()).stream().anyMatch(nistagramUser -> nistagramUser.getUsername().equals(userName))){
+        if(loggedUser.getCloseFriends().stream().anyMatch(nistagramUser -> nistagramUser.getUsername().equals(userName))){
             return CloseFriends.CLOSE_FRIENDS;
         }
         return  CloseFriends.NOT_CLOSE;
@@ -39,10 +38,11 @@ public class InteractionServiceImpl implements IInteractionService {
         if(loggedUser==null)
             throw new UserNotLogged();
         var user = userRepository.findByUsername(username);
-        if(userRepository.findAllCloseFriends(loggedUser.getUsername()).stream().noneMatch(nistagramUser -> nistagramUser.getUsername().equals(username))){
+        if(loggedUser.getCloseFriends().contains(user)){
             throw new UserAlreadyRemoved(username);
         }
-        userRepository.removeCloseFriend(loggedUser.getUsername(),username);
+        loggedUser.getCloseFriends().remove(user);
+        userRepository.save(loggedUser);
     }
 
     @Override
@@ -51,10 +51,11 @@ public class InteractionServiceImpl implements IInteractionService {
         if(loggedUser==null)
             throw new UserNotLogged();
         var user = userRepository.findByUsername(username);
-        if(userRepository.findAllCloseFriends(loggedUser.getUsername()).stream().anyMatch(nistagramUser -> nistagramUser.getUsername().equals(username))){
+        if(!loggedUser.getCloseFriends().contains(user)){
             throw new UserAlreadyAdded(username);
         }
-        userRepository.addCloseFriend(loggedUser.getUsername(),username);
+        loggedUser.getCloseFriends().add(user);
+        userRepository.save(loggedUser);
     }
 
     private NistagramUser getCurrentlyLoggedUser() {

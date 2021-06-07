@@ -9,6 +9,7 @@ import org.nistagram.contentmicroservice.data.model.Location;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @TypeDefs({
         @TypeDef(
@@ -81,5 +82,18 @@ public abstract class Content {
                 ", date=" + date +
                 ", location=" + location +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Content content = (Content) o;
+        return id.equals(content.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
