@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -26,8 +27,7 @@ public class PostReactionServiceImpl implements PostReactionService {
 
     @Override
     public void comment(UploadCommentDto dto) {
-        Post post = postRepository.findByIdentifier(dto.getPostId());
-        validatePost(post, dto.getPostId());
+        Post post = getPost(dto.getPostId());
 
         // TODO: get post owner and validate request (follow microservice)
 
@@ -38,8 +38,7 @@ public class PostReactionServiceImpl implements PostReactionService {
 
     @Override
     public void like(long postId) {
-        Post post = postRepository.findByIdentifier(postId);
-        validatePost(post, postId);
+        Post post = getPost(postId);
 
         // TODO: get post owner and validate request (follow microservice)
 
@@ -52,8 +51,7 @@ public class PostReactionServiceImpl implements PostReactionService {
 
     @Override
     public void dislike(long postId) {
-        Post post = postRepository.findByIdentifier(postId);
-        validatePost(post, postId);
+        Post post = getPost(postId);
 
         // TODO: get post owner and validate request (follow microservice)
 
@@ -64,10 +62,12 @@ public class PostReactionServiceImpl implements PostReactionService {
         }
     }
 
-    void validatePost(Post post, long postId) {
-        if (post == null) {
+    Post getPost(long postId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if (post.isEmpty()) {
             throw new PostDoesNotExistException(postId);
         }
+        return post.get();
     }
 
     void validateUser(NistagramUser owner) {

@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 @Entity
 @DiscriminatorValue("INSTAGRAM_USER")
 public class NistagramUser extends User {
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_close_friend",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "close_friend_id", referencedColumnName = "id"))
     private List<NistagramUser> closeFriends;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_subscribed_user",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "subscribed_user_id", referencedColumnName = "id"))

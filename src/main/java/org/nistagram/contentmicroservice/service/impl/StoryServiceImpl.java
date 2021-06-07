@@ -74,11 +74,7 @@ public class StoryServiceImpl implements IStoryService {
     }
 
     private NistagramUser getUser(String username) {
-        var optionalNistagramUser = userRepository.findById(username);
-        if (optionalNistagramUser.isEmpty()) {
-            throw new NotFoundException();
-        }
-        return optionalNistagramUser.get();
+        return userRepository.findByUsername(username);
     }
 
     private List<StoryDto> makeDtos(List<Story> stories) {

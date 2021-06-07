@@ -1,11 +1,21 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 import org.nistagram.contentmicroservice.data.model.Location;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+@TypeDefs({
+        @TypeDef(
+                name = "string-array",
+                typeClass = StringArrayType.class
+        )
+})
 @Entity
 @Table(name = "Content")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -17,7 +27,11 @@ public abstract class Content {
     @Column(name = "id", unique = true)
     private Long id;
 
-    @Column(name = "tags")
+    @Type(type = "string-array")
+    @Column(
+            name = "tags",
+            columnDefinition = "text[]"
+    )
     private List<String> tags;
 
     @Column(name = "date")

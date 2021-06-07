@@ -14,6 +14,7 @@ import org.nistagram.contentmicroservice.data.repository.LocationRepository;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
+import org.nistagram.contentmicroservice.exceptions.PostDoesNotExistException;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,14 +49,13 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public List<String> getImageNames(Long id) {
-        var optionalPost = postRepository.findByIdentifier(id);
-        var post = optionalPost;
+        var post = getPost(id);
         return Arrays.asList(post.getPaths().clone());
     }
 
     @Override
     public PostDto getPostInfo(Long id) {
-        var post = postRepository.findByIdentifier(id);
+        var post = getPost(id);
         var l = locationRepository.findByContent(id);
         LocationDto location;
         if (l != null) {
@@ -137,5 +137,13 @@ public class PostServiceImpl implements IPostService {
         });
 
         return locationDtos;
+    }
+
+    Post getPost(long postId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if (post.isEmpty()) {
+            throw new PostDoesNotExistException(postId);
+        }
+        return post.get();
     }
 }
