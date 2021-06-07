@@ -125,4 +125,22 @@ public abstract class User implements UserDetails {
         }
         return authorities;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return enabled == user.enabled &&
+                Objects.equals(administrationRole, user.administrationRole) &&
+                Objects.equals(id, user.id) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(lastPasswordResetDate, user.lastPasswordResetDate) &&
+                Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(administrationRole, id, username, enabled, lastPasswordResetDate, roles);
+    }
 }

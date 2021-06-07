@@ -63,9 +63,9 @@ public class PostServiceImpl implements IPostService {
         } else location = null;
         var tags = post.getTags();
         var date = post.getDate();
-        var likes = userRepository.findAllWhoLikedPost(post.getId()).size();
-        var dislikes = userRepository.findAllWhoDislikedPost(post.getId()).size();
-        var comments = commentRepository.findByPost(post.getId());
+        var likes = post.getLikes().size();
+        var dislikes = post.getDislikes().size();
+        var comments = post.getComments();
         var about = post.getAbout();
         List<Long> commentIds = new ArrayList<>();
         comments.forEach(comment -> commentIds.add(comment.getId()));
