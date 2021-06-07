@@ -25,6 +25,12 @@ public class Comment {
     public Comment() {
     }
 
+    public Comment(String text, Date date, NistagramUser user) {
+        this.text = text;
+        this.date = date;
+        this.user = user;
+    }
+
     public Comment(Long id, String text, Date date, NistagramUser user) {
         this.id = id;
         this.text = text;
