@@ -69,6 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/search/**").permitAll()
                 .antMatchers("/post/**").permitAll()
                 .antMatchers("/interaction/**").permitAll()
+                .antMatchers("/favourites/**").permitAll()
                 .antMatchers("/post/uploadContent").hasAuthority("NISTAGRAM_USER_ROLE")
                 .anyRequest().authenticated().and()
                 // Add JWT token filter

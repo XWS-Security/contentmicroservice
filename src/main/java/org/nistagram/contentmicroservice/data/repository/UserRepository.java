@@ -33,6 +33,6 @@ public interface UserRepository extends CrudRepository<NistagramUser, String> {
     @Query("MATCH(u:NistagramUser), (p:Post) WHERE u.username=$0 AND p.id=$1 CREATE (p)-[:SAVED]->(u)")
     void savePost(String username, Long postId);
 
-    @Query("MATCH(u:NistagramUser)<-[s:SAVED]-(p:postId) WHERE u.username=$0 AND p.id=$1 delete s")
+    @Query("MATCH(u:NistagramUser)<-[s:SAVED]-(p:Post) WHERE u.username=$0 AND p.id=$1 delete s")
     void removeSavedPost(String username, Long postId);
 }
