@@ -1,12 +1,9 @@
 package org.nistagram.contentmicroservice.controller;
 
-import org.nistagram.contentmicroservice.data.dto.CommentDto;
-import org.nistagram.contentmicroservice.data.dto.CreatePostDto;
-import org.nistagram.contentmicroservice.data.dto.LocationDto;
-import org.nistagram.contentmicroservice.data.dto.PostDto;
-import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
+import org.nistagram.contentmicroservice.data.dto.*;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IPostService;
+import org.nistagram.contentmicroservice.service.PostReactionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.net.ssl.SSLException;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,12 +21,14 @@ import java.util.List;
 public class PostController {
 
     private final IPostService postService;
+    private final PostReactionService postReactionService;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
-    public PostController(IPostService postService) {
+    public PostController(IPostService postService, PostReactionService postReactionService) {
         this.postService = postService;
+        this.postReactionService = postReactionService;
     }
 
     @GetMapping("/images/{id}")
@@ -83,4 +83,39 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping(path = "/comment")
+    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    public ResponseEntity<String> comment(@RequestBody @Valid UploadCommentDto dto) {
+        try {
+            postReactionService.comment(dto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: log error
+            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(path = "/like")
+    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    public ResponseEntity<String> like(@RequestBody @Valid UploadReactionToPostDto dto) {
+        try {
+            postReactionService.like(dto.getPostId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: log error
+            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(path = "/dislike")
+    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    public ResponseEntity<String> dislike(@RequestBody @Valid UploadReactionToPostDto dto) {
+        try {
+            postReactionService.dislike(dto.getPostId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            // TODO: log error
+            return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
 }

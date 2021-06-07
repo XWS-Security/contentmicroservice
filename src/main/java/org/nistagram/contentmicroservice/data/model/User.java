@@ -27,13 +27,7 @@ public abstract class User implements UserDetails {
     private List<Role> roles;
 
     protected User() {
-    }
-
-    protected User(String username, boolean enabled, Date lastPasswordResetDate, List<Role> roles) {
-        this.username = username;
-        this.enabled = enabled;
-        this.lastPasswordResetDate = lastPasswordResetDate;
-        this.roles = roles;
+        this.roles = new ArrayList<>();
     }
 
     @Override
