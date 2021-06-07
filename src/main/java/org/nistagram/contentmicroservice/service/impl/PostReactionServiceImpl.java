@@ -44,12 +44,10 @@ public class PostReactionServiceImpl implements PostReactionService {
         // TODO: get post owner and validate request (follow microservice)
 
         String username = getCurrentlyLoggedUser().getUsername();
-        Post dislike = postRepository.findDislike(username, postId);
-        if (dislike != null) {
-            postRepository.deleteDislike(username, postId);
+        postRepository.deleteDislike(username, postId);
+        if (postRepository.findLike(username, postId) == null) {
+            postRepository.addLike(username, postId);
         }
-
-        postRepository.addLike(username, postId);
     }
 
     @Override
@@ -60,12 +58,10 @@ public class PostReactionServiceImpl implements PostReactionService {
         // TODO: get post owner and validate request (follow microservice)
 
         String username = getCurrentlyLoggedUser().getUsername();
-        Post like = postRepository.findLike(username, postId);
-        if (like != null) {
-            postRepository.deleteLike(username, postId);
+        postRepository.deleteLike(username, postId);
+        if (postRepository.findDislike(username, postId) == null) {
+            postRepository.addDislike(username, postId);
         }
-
-        postRepository.addDislike(username, postId);
     }
 
     void validatePost(Post post, long postId) {
