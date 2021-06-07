@@ -1,23 +1,30 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
-import org.neo4j.springframework.data.core.schema.Id;
-import org.neo4j.springframework.data.core.schema.Node;
-import org.neo4j.springframework.data.core.schema.Property;
-import org.neo4j.springframework.data.core.schema.Relationship;
 import org.nistagram.contentmicroservice.data.model.Location;
 
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Node("Content")
+@Entity
+@Table(name = "Content")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "content_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Content {
     @Id
+    @SequenceGenerator(name = "content_sequence_generator", sequenceName = "content_sequence", initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "content_sequence_generator")
+    @Column(name = "id", unique = true)
     private Long id;
-    @Property("tags")
+
+    @Column(name = "tags")
     private List<String> tags;
-    @Property("date")
+
+    @Column(name = "date")
     private Date date;
-    @Relationship(type = "LOCATED", direction = Relationship.Direction.INCOMING)
+
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "location_id")
     private Location location;
 
     public Long getId() {

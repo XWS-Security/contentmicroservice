@@ -1,28 +1,56 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.neo4j.springframework.data.core.schema.*;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.model.content.Story;
 
+import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Node("NistagramUser")
+@Entity
+@DiscriminatorValue("INSTAGRAM_USER")
 public class NistagramUser extends User {
-    @Relationship(type = "IS_CLOSE_FRIEND", direction = Relationship.Direction.INCOMING)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_close_friend",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "close_friend_id", referencedColumnName = "id"))
     private List<NistagramUser> closeFriends;
-    @Relationship(type = "SUBSCRIBED", direction = Relationship.Direction.INCOMING)
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_subscribed_user",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "subscribed_user_id", referencedColumnName = "id"))
     private List<NistagramUser> subscribedUsers;
-    @Relationship(type = "SAVED", direction = Relationship.Direction.INCOMING)
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_saved",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "saved_id")})
     private List<Post> savedContent;
-    @Relationship(type = "REPORTED", direction = Relationship.Direction.INCOMING)
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_content_report",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "content_report_id", referencedColumnName = "id")})
+    @MapKeyJoinColumn(name = "content_id")
     private Map<Content, Report> reportedComments;
-    @Relationship(type = "CONTENTS", direction = Relationship.Direction.INCOMING)
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_content",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "content_id")})
     private List<Content> content;
+
+    @Column(name = "profilePicture")
     private String profilePictureName;
+
+    @Column(name = "about")
     private String about;
-    @Property("private")
+
+    @Column(name = "privateProfile")
     private Boolean profilePrivate;
 
     public List<Post> getPosts() {
@@ -44,15 +72,6 @@ public class NistagramUser extends User {
         this.reportedComments = new HashMap<>();
         this.content = new ArrayList<>();
     }
-
-//    public NistagramUser(String username, boolean enabled, Date lastPasswordResetDate, List<Role> roles) {
-//        super(username, enabled, lastPasswordResetDate, roles);
-//        this.closeFriends = new ArrayList<>();
-//        this.subscribedUsers = new ArrayList<>();
-//        this.savedContent = new ArrayList<>();
-//        this.reportedComments = new HashMap<>();
-//        this.content = new ArrayList<>();
-//    }
 
     public List<NistagramUser> getCloseFriends() {
         return closeFriends;

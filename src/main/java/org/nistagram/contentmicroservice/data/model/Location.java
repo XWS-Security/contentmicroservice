@@ -1,16 +1,17 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.neo4j.springframework.data.core.schema.GeneratedValue;
-import org.neo4j.springframework.data.core.schema.Id;
-import org.neo4j.springframework.data.core.schema.Node;
-import org.neo4j.springframework.data.core.schema.Property;
+import javax.persistence.*;
 
-@Node("Location")
+@Entity
+@Table(name = "Location")
 public class Location {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "location_sequence_generator", sequenceName = "location_sequence", initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "location_sequence_generator")
+    @Column(name = "id", unique = true)
     private Long id;
-    @Property("name")
+
+    @Column(name = "name")
     private String name;
 
     public Location() {

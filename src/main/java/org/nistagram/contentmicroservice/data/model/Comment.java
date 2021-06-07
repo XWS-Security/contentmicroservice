@@ -1,19 +1,25 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.neo4j.springframework.data.core.schema.*;
-
+import javax.persistence.*;
 import java.util.Date;
 
-@RelationshipProperties()
+@Entity
+@Table(name = "Comment")
 public class Comment {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "comment_sequence_generator", sequenceName = "comment_sequence", initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_sequence_generator")
+    @Column(name = "id", unique = true)
     private Long id;
-    @Property("text")
+
+    @Column(name = "text")
     private String text;
-    @Property("Date")
+
+    @Column(name = "date")
     private Date date;
-    @Relationship(type = "COMMENTATOR", direction = Relationship.Direction.INCOMING)
+
+    @ManyToOne(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "user_id")
     private NistagramUser user;
 
     public Comment() {

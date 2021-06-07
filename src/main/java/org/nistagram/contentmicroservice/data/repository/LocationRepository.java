@@ -1,7 +1,7 @@
 package org.nistagram.contentmicroservice.data.repository;
 
-import org.neo4j.springframework.data.repository.query.Query;
 import org.nistagram.contentmicroservice.data.model.Location;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 public interface LocationRepository extends CrudRepository<Location, Long> {

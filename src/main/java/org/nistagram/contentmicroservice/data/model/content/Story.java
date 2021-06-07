@@ -1,15 +1,19 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
-import org.neo4j.springframework.data.core.schema.Node;
-import org.neo4j.springframework.data.core.schema.Property;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
-@Node("Story")
-public class Story extends Content{
-    @Property("path")
+@Entity
+@DiscriminatorValue("POST")
+public class Story extends Content {
+    @Column(name = "path")
     private String path;
-    @Property("onlyCloseFriends")
+
+    @Column(name = "onlyCloseFriends")
     private boolean onlyCloseFriends;
-    @Property("highlights")
+
+    @Column(name = "highlights")
     private boolean highlights;
 
     public Story() {

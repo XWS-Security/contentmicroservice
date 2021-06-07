@@ -1,33 +1,53 @@
 package org.nistagram.contentmicroservice.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.neo4j.springframework.data.core.schema.*;
 import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.*;
 import java.util.*;
 
-@Node("AuthUser")
+@Entity
+@Table(name = "gram_user")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements UserDetails {
     @Transient
     private final String administrationRole = "NISTAGRAM_USER_ROLE";
 
     @Id
+    @SequenceGenerator(name = "user_sequence_generator", sequenceName = "user_sequence", initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence_generator")
+    @Column(name = "id", unique = true)
+    private Long id;
+
+    @Column(name = "username")
     private String username;
 
-    @Property(name = "enabled")
+    @Column(name = "enabled")
     private boolean enabled = false;
 
-    @Property(name = "lastPasswordResetDate")
+    @Column(name = "lastPasswordResetDate")
     private Date lastPasswordResetDate;
 
-    @Relationship(type = "HAS_ROLE", direction = Relationship.Direction.INCOMING)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private List<Role> roles;
 
     protected User() {
         this.roles = new ArrayList<>();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

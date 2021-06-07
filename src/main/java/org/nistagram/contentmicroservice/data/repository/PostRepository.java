@@ -1,8 +1,8 @@
 package org.nistagram.contentmicroservice.data.repository;
 
-import org.neo4j.springframework.data.repository.query.Query;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
