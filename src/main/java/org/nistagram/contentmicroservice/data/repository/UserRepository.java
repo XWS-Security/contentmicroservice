@@ -25,8 +25,14 @@ public interface UserRepository extends CrudRepository<NistagramUser, String> {
     List<NistagramUser> findAllCloseFriends(String username);
 
     @Query("MATCH(u:NistagramUser)<-[c:IS_CLOSE_FRIEND]-(cf:NistagramUser) WHERE u.username=$0 AND cf.username=$1 delete c")
-    List<NistagramUser> removeCloseFriend(String username,String friendUsername);
+    List<NistagramUser> removeCloseFriend(String username, String friendUsername);
 
     @Query("MATCH(u:NistagramUser), (cf:NistagramUser) WHERE u.username=$0 AND cf.username=$1 CREATE (cf)-[:IS_CLOSE_FRIEND]->(u)")
-    List<NistagramUser> addCloseFriend(String username,String friendUsername);
+    void addCloseFriend(String username, String friendUsername);
+
+    @Query("MATCH(u:NistagramUser), (p:Post) WHERE u.username=$0 AND p.id=$1 CREATE (p)-[:SAVED]->(u)")
+    void savePost(String username, Long postId);
+
+    @Query("MATCH(u:NistagramUser)<-[s:SAVED]-(p:postId) WHERE u.username=$0 AND p.id=$1 delete s")
+    void removeSavedPost(String username, Long postId);
 }
