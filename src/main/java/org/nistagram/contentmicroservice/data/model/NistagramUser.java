@@ -45,14 +45,14 @@ public class NistagramUser extends User {
         this.content = new ArrayList<>();
     }
 
-    public NistagramUser(String username, boolean enabled, Date lastPasswordResetDate, List<Role> roles) {
-        super(username, enabled, lastPasswordResetDate, roles);
-        this.closeFriends = new ArrayList<>();
-        this.subscribedUsers = new ArrayList<>();
-        this.savedContent = new ArrayList<>();
-        this.reportedComments = new HashMap<>();
-        this.content = new ArrayList<>();
-    }
+//    public NistagramUser(String username, boolean enabled, Date lastPasswordResetDate, List<Role> roles) {
+//        super(username, enabled, lastPasswordResetDate, roles);
+//        this.closeFriends = new ArrayList<>();
+//        this.subscribedUsers = new ArrayList<>();
+//        this.savedContent = new ArrayList<>();
+//        this.reportedComments = new HashMap<>();
+//        this.content = new ArrayList<>();
+//    }
 
     public List<NistagramUser> getCloseFriends() {
         return closeFriends;

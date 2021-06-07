@@ -75,7 +75,7 @@ public class TokenUtils {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            e.printStackTrace();
+            // TODO: log token error
             claims = null;
         }
         return claims;
