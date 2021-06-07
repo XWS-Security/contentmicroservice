@@ -56,7 +56,7 @@ public class PostServiceImpl implements IPostService {
     @Override
     public PostDto getPostInfo(Long id) {
         var post = getPost(id);
-        var l = locationRepository.findByContent(id);
+        var l = post.getLocation();
         LocationDto location;
         if (l != null) {
             location = new LocationDto(l);

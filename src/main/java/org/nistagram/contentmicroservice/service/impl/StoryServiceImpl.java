@@ -80,7 +80,7 @@ public class StoryServiceImpl implements IStoryService {
     private List<StoryDto> makeDtos(List<Story> stories) {
         var dtos = new ArrayList<StoryDto>();
         stories.forEach(story -> {
-            var location = locationRepository.findByContent(story.getId());
+            var location = story.getLocation();
             var locationDto = (location == null) ? null :
                     new LocationDto(location.getId(), location.getName());
             dtos.add(new StoryDto(story.getId(), story.getPath(),
