@@ -1,25 +1,52 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
-import org.neo4j.springframework.data.core.schema.Node;
-import org.neo4j.springframework.data.core.schema.Property;
-import org.neo4j.springframework.data.core.schema.Relationship;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 import org.nistagram.contentmicroservice.data.model.Comment;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Node("Post")
+@TypeDefs({
+        @TypeDef(
+                name = "string-array",
+                typeClass = StringArrayType.class
+        )
+})
+@Entity
+@DiscriminatorValue("POST")
 public class Post extends Content {
 
-    @Relationship(type = "LIKES", direction = Relationship.Direction.INCOMING)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "post_likes",
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<NistagramUser> likes;
-    @Relationship(type = "DISLIKES", direction = Relationship.Direction.INCOMING)
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "post_dislikes",
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<NistagramUser> dislikes;
-    @Relationship(type = "COMMENTS", direction = Relationship.Direction.INCOMING)
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "post_comment",
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "comment_id", referencedColumnName = "id"))
     private List<Comment> comments;
-    @Property("paths")
-    private List<String> paths;
+
+    @Type(type = "string-array")
+    @Column(
+            name = "paths",
+            columnDefinition = "text[]"
+    )
+    private String[] paths;
+
+    @Column(name = "about")
     private String about;
 
     public Post() {
@@ -60,12 +87,21 @@ public class Post extends Content {
         this.comments = comments;
     }
 
-    public List<String> getPaths() {
+    public String[] getPaths() {
         return paths;
     }
-    public void setPaths(List<String> paths) {
+
+    public void setPaths(String[] paths) {
         this.paths = paths;
     }
+
+//    public List<String> getPaths() {
+//        return Arrays.asList(paths.clone());
+//    }
+//
+//    public void setPaths(List<String> paths) {
+//        this.paths = paths.toArray();
+//    }
 
     @Override
     public String toString() {

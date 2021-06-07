@@ -1,14 +1,17 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.neo4j.springframework.data.core.schema.*;
+import javax.persistence.*;
 
-@Node("AuthRole")
+@Entity
+@Table(name = "AuthRole")
 public class Role {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "role_sequence_generator", sequenceName = "role_sequence", initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_sequence_generator")
+    @Column(name = "id", unique = true)
     private Long id;
 
-    @Property(name = "name")
+    @Column(name = "name")
     private String name;
 
     public Role() {

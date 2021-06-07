@@ -1,16 +1,17 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.neo4j.springframework.data.core.schema.GeneratedValue;
-import org.neo4j.springframework.data.core.schema.Id;
-import org.neo4j.springframework.data.core.schema.Property;
-import org.neo4j.springframework.data.core.schema.RelationshipProperties;
+import javax.persistence.*;
 
-@RelationshipProperties()
+@Entity
+@Table(name = "Report")
 public class Report {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "report_sequence_generator", sequenceName = "report_sequence", initialValue = 100)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "report_sequence_generator")
+    @Column(name = "id", unique = true)
     private Long id;
-    @Property("reason")
+
+    @Column(name = "reason")
     private String reason;
 
     public Report() {
