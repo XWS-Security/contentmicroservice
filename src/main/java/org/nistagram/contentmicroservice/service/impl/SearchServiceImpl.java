@@ -25,7 +25,7 @@ public class SearchServiceImpl implements ISearchService {
         posts.forEach(post -> {
             if (post.getLocation() != null) {
                 if (post.getLocation().getName().toLowerCase().contains(locationName.toLowerCase())) {
-                    dtos.add(new ProfileImageDto(post.getPaths()[0], post.getId()));
+                    dtos.add(new ProfileImageDto(post.getPaths().get(0), post.getId()));
                 }
             }
         });
@@ -41,7 +41,7 @@ public class SearchServiceImpl implements ISearchService {
             if (post.getTags() != null) {
                 post.getTags().forEach(t -> {
                     if (t.toLowerCase().contains(tag.toLowerCase())) {
-                        dtos.add(new ProfileImageDto(post.getPaths()[0], post.getId()));
+                        dtos.add(new ProfileImageDto(post.getPaths().get(0), post.getId()));
                     }
                 });
             }

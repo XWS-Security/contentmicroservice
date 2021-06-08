@@ -44,7 +44,7 @@ public class Post extends Content {
             name = "paths",
             columnDefinition = "text[]"
     )
-    private String[] paths;
+    private List<String> paths;
 
     @Column(name = "about")
     private String about;
@@ -87,11 +87,11 @@ public class Post extends Content {
         this.comments = comments;
     }
 
-    public String[] getPaths() {
+    public List<String> getPaths() {
         return paths;
     }
 
-    public void setPaths(String[] paths) {
+    public void setPaths(List<String> paths) {
         this.paths = paths;
     }
 

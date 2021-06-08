@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-@Table(name = "gram_user")
+@Table(name = "nistagram_user")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements UserDetails {
@@ -29,7 +29,7 @@ public abstract class User implements UserDetails {
     @Column(name = "enabled")
     private boolean enabled = false;
 
-    @Column(name = "lastPasswordResetDate")
+    @Column(name = "last_password_reset_date")
     private Date lastPasswordResetDate;
 
     @ManyToMany(fetch = FetchType.EAGER)
