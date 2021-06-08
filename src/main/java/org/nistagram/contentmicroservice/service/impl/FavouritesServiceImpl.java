@@ -33,7 +33,7 @@ public class FavouritesServiceImpl implements IFavouritesService {
         var posts = new ArrayList<PostImageLinkDto>();
         user.getSavedContent().forEach(post -> {
             var postOwner = userRepository.findByContentContaining(post.getId());
-            posts.add(new PostImageLinkDto(post.getPaths().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
+            posts.add(new PostImageLinkDto(post.getPathsList().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
         });
         return posts;
     }

@@ -8,6 +8,7 @@ import org.hibernate.annotations.TypeDefs;
 import org.nistagram.contentmicroservice.data.model.Location;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -34,9 +35,7 @@ public abstract class Content {
             name = "tags",
             columnDefinition = "text[]"
     )
-    @SQLInsert(sql = "", callable = false)
-    
-    private List<String> tags;
+    private String[] tags;
 
     @Column(name = "date")
     private Date date;
@@ -53,12 +52,24 @@ public abstract class Content {
         this.id = id;
     }
 
-    public List<String> getTags() {
+    public String[] getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(String[] tags) {
         this.tags = tags;
+    }
+
+    public List<String> getTagsList() {
+        return Arrays.asList(tags.clone());
+    }
+
+    public void setTagsList(List<String> tags) {
+        String[] array = new String[tags.size()];
+        for (int i = 1; i<tags.size(); i++) {
+            array[i] = tags.get(i);
+        }
+        this.tags = array;
     }
 
     public Date getDate() {
