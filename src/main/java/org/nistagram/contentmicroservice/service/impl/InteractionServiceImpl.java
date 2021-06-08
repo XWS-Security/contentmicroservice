@@ -27,6 +27,7 @@ public class InteractionServiceImpl implements IInteractionService {
             return CloseFriends.USER_UNSIGNED;
         if(loggedUser.getUsername().equals(userName))
             return CloseFriends.SAME_USER;
+        // TODO: fix exception here
         if(loggedUser.getCloseFriends().stream().anyMatch(nistagramUser -> nistagramUser.getUsername().equals(userName))){
             return CloseFriends.CLOSE_FRIENDS;
         }
