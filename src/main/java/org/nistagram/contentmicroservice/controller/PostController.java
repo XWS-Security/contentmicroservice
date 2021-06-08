@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.controller;
 
 import org.nistagram.contentmicroservice.data.dto.*;
+import org.nistagram.contentmicroservice.exceptions.AccessToUserProfileDeniedException;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.nistagram.contentmicroservice.service.PostReactionService;
@@ -89,6 +90,9 @@ public class PostController {
         try {
             postReactionService.comment(dto);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (AccessToUserProfileDeniedException e) {
+            // TODO: log error
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             // TODO: log error
             e.printStackTrace();
@@ -102,6 +106,9 @@ public class PostController {
         try {
             postReactionService.like(dto.getPostId());
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (AccessToUserProfileDeniedException e) {
+            // TODO: log error
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             // TODO: log error
             e.printStackTrace();
@@ -115,6 +122,9 @@ public class PostController {
         try {
             postReactionService.dislike(dto.getPostId());
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (AccessToUserProfileDeniedException e) {
+            // TODO: log error
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             // TODO: log error
             e.printStackTrace();

@@ -1,43 +1,69 @@
 package org.nistagram.contentmicroservice.service.impl;
 
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.nistagram.contentmicroservice.data.dto.FollowRequestAccessResponseDto;
 import org.nistagram.contentmicroservice.data.dto.UploadCommentDto;
 import org.nistagram.contentmicroservice.data.model.Comment;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
+import org.nistagram.contentmicroservice.data.repository.CommentRepository;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
+import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.exceptions.AccessToUserProfileDeniedException;
 import org.nistagram.contentmicroservice.exceptions.PostDoesNotExistException;
 import org.nistagram.contentmicroservice.service.PostReactionService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
+import reactor.netty.http.client.HttpClient;
 
+import javax.net.ssl.SSLException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class PostReactionServiceImpl implements PostReactionService {
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
-    public PostReactionServiceImpl(PostRepository postRepository) {
+    @Value("${FOLLOWER}")
+    private String followerMicroserviceURI;
+
+    public PostReactionServiceImpl(PostRepository postRepository, UserRepository userRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     @Override
-    public void comment(UploadCommentDto dto) {
+    public void comment(UploadCommentDto dto) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(dto.getPostId());
+        NistagramUser owner = userRepository.findByContentContaining(dto.getPostId());
+        validateUser(owner);
 
-        // TODO: get post owner and validate request (follow microservice)
-
+        // TODO: fix lazy loading issues
         Comment comment = new Comment(dto.getText(), new Date(), getCurrentlyLoggedUser());
-        post.getComments().add(comment);
+        List<Comment> comments = commentRepository.findByPostId(post.getId());
+        comments.add(comment);
+        post.setComments(comments);
         postRepository.save(post);
     }
 
     @Override
-    public void like(long postId) {
+    public void like(long postId) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(postId);
         NistagramUser user = getCurrentlyLoggedUser();
-        // TODO: get post owner and validate request (follow microservice)
+        NistagramUser owner = userRepository.findByContentContaining(postId);
+        validateUser(owner);
 
+        // TODO: fix lazy loading issues
         post.getDislikes().remove(user);
         if (!post.getLikes().contains(user)) {
             post.getLikes().add(user);
@@ -46,11 +72,13 @@ public class PostReactionServiceImpl implements PostReactionService {
     }
 
     @Override
-    public void dislike(long postId) {
+    public void dislike(long postId) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(postId);
         NistagramUser user = getCurrentlyLoggedUser();
-        // TODO: get post owner and validate request (follow microservice)
+        NistagramUser owner = userRepository.findByContentContaining(postId);
+        validateUser(owner);
 
+        // TODO: fix lazy loading issues
         post.getLikes().remove(user);
         if (!post.getDislikes().contains(user)) {
             post.getDislikes().add(user);
@@ -66,8 +94,35 @@ public class PostReactionServiceImpl implements PostReactionService {
         return post.get();
     }
 
-    void validateUser(NistagramUser owner) {
-        // TODO: check if user has access to poster's content
+    void validateUser(NistagramUser owner) throws SSLException {
+        String follower = getCurrentlyLoggedUser().getUsername();
+        String followee = owner.getUsername();
+
+        // SSL
+        SslContext sslContext = SslContextBuilder
+                .forClient()
+                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                .build();
+        HttpClient httpClient = HttpClient.create().secure(t -> t.sslContext(sslContext));
+
+        // Creating web client.
+        WebClient client = WebClient.builder()
+                .baseUrl(followerMicroserviceURI)
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+
+        // Define a method.
+        Flux<FollowRequestAccessResponseDto> response = client.get()
+                .uri("/users/hasAccess/" + follower + "/" + followee)
+                .retrieve()
+                .bodyToFlux(FollowRequestAccessResponseDto.class);
+
+        response.subscribe(dto -> {
+            if (dto.isAccessAllowed()) {
+                return;
+            }
+            throw new AccessToUserProfileDeniedException(dto.getMessage());
+        });
     }
 
     private NistagramUser getCurrentlyLoggedUser() {
