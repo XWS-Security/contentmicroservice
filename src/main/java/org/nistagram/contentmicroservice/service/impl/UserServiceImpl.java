@@ -47,6 +47,8 @@ public class UserServiceImpl implements UserService {
         }
         loadedUser.setProfilePrivate(editUserDto.isProfilePrivate());
         loadedUser.setUsername(editUserDto.getUsername());
+        System.out.println(editUserDto.getAbout());
+        loadedUser.setAbout(editUserDto.getAbout());
         userRepository.save(loadedUser);
     }
 

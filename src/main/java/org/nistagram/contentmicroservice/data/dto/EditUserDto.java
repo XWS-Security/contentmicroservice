@@ -11,6 +11,10 @@ public class EditUserDto implements Serializable {
     @NotNull
     @Pattern(regexp = "^[a-zA-Z0-9_]{2,12}", message = "Username must be 2 to 12 characters long and can contain only letters, numbers and an underscore.")
     private String oldUsername;
+
+    @NotNull
+    private String about;
+
     private boolean profilePrivate = false;
 
     public EditUserDto() {
@@ -38,5 +42,13 @@ public class EditUserDto implements Serializable {
 
     public void setProfilePrivate(boolean profilePrivate) {
         this.profilePrivate = profilePrivate;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
     }
 }
