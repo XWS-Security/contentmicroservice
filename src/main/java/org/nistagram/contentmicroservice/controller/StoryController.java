@@ -53,4 +53,15 @@ public class StoryController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<StoryDto>> getLoggedUsersStories() {
+        try {
+            var stories = storyService.getLoggedUsersStories();
+            return ResponseEntity.ok().body(stories);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

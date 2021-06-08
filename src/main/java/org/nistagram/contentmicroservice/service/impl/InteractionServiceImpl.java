@@ -1,5 +1,6 @@
 package org.nistagram.contentmicroservice.service.impl;
 
+import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.data.enums.CloseFriends;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
@@ -56,6 +57,15 @@ public class InteractionServiceImpl implements IInteractionService {
         }
         loggedUser.getCloseFriends().add(user);
         userRepository.save(loggedUser);
+    }
+
+    @Override
+    public PostsUserDto getLoggedUserInfo() {
+        var user = getCurrentlyLoggedUser();
+        if(user==null){
+            return new PostsUserDto("","");
+        }
+        return new PostsUserDto(user.getUsername(), user.getProfilePictureName());
     }
 
     private NistagramUser getCurrentlyLoggedUser() {
