@@ -102,7 +102,7 @@ public class Post extends Content {
 
     public void setPathsList(List<String> paths) {
         String[] array = new String[paths.size()];
-        for (int i = 1; i<paths.size(); i++) {
+        for (int i = 0; i<paths.size(); i++) {
             array[i] = paths.get(i);
         }
         this.paths = array;

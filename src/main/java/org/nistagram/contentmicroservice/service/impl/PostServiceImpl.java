@@ -117,7 +117,7 @@ public class PostServiceImpl implements IPostService {
         post.setAbout(postDto.getAbout());
         post.setDate(Calendar.getInstance().getTime());
         post.setId(postId);
-//        post.setLocation(locationRepository.findByName(postDto.getLocation()));
+        post.setLocation(locationRepository.findByName(postDto.getLocation()));
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Content> userContent = contentRepository.findAllByUserId(user.getId());

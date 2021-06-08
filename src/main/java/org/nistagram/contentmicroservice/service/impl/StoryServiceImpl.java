@@ -125,7 +125,8 @@ public class StoryServiceImpl implements IStoryService {
         if(user==null){
             throw new UserNotLogged();
         }
-        return makeDtos(user.getStories());
+        List<Story> userStories = storyRepository.findAllByUserId(user.getId());
+        return makeDtos(userStories);
     }
 
     private boolean passed24Hours(Date date) {

@@ -12,4 +12,9 @@ public interface PostRepository extends CrudRepository<Post, Long> {
             " FROM content AS c, user_content AS uc" +
             " WHERE c.content_type = 'POST' AND uc.user_id = :id AND c.id = uc.content_id", nativeQuery = true)
     List<Post> findAllByUserId (@Param("id") Long id);
+
+    @Query(value = "SELECT c.id, c.tags, c.date, c.location_id, c.paths, c.about, c.content_type " +
+    " FROM content AS c, user_saved AS us" +
+    " WHERE us.user_id = :id AND us.saved_id = c.id", nativeQuery = true)
+    List<Post> findAllFavourites(@Param("id") Long id);
 }

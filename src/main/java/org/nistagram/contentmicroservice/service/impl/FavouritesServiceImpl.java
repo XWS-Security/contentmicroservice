@@ -2,6 +2,7 @@ package org.nistagram.contentmicroservice.service.impl;
 
 import org.nistagram.contentmicroservice.data.dto.PostImageLinkDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FavouritesServiceImpl implements IFavouritesService {
@@ -31,7 +33,7 @@ public class FavouritesServiceImpl implements IFavouritesService {
             throw new UserNotLogged();
         }
         var posts = new ArrayList<PostImageLinkDto>();
-        user.getSavedContent().forEach(post -> {
+        postRepository.findAllFavourites(user.getId()).forEach(post -> {
             var postOwner = userRepository.findByContentContaining(post.getId());
             posts.add(new PostImageLinkDto(post.getPathsList().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
         });
@@ -44,7 +46,12 @@ public class FavouritesServiceImpl implements IFavouritesService {
         if (user == null) {
             throw new UserNotLogged();
         }
-        return user.getSavedContent().stream().anyMatch(post -> post.getId().equals(postId));
+        Optional<Post> postOptional = postRepository.findById(postId);
+        if (postOptional.isEmpty()) {
+            throw new NotFoundException();
+        }
+        Post post = postOptional.get();
+        return postRepository.findAllFavourites(user.getId()).contains(post);
     }
 
     @Override
@@ -54,15 +61,17 @@ public class FavouritesServiceImpl implements IFavouritesService {
             throw new UserNotLogged();
         }
         var postOptional = postRepository.findById(postId);
-        if(postOptional.isEmpty()){
+        if (postOptional.isEmpty()) {
             throw new NotFoundException();
         }
         var post = postOptional.get();
-        if (user.getSavedContent().contains(post)) {
-            user.getSavedContent().remove(post);
+        List<Post> favourites = postRepository.findAllFavourites(user.getId());
+        if (favourites.contains(post)) {
+            favourites.remove(post);
         } else {
-            user.getSavedContent().add(post);
+            favourites.add(post);
         }
+        user.setSavedContent(favourites);
         userRepository.save(user);
     }
 
