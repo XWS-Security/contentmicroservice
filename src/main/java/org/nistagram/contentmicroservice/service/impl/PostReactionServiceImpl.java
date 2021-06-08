@@ -19,7 +19,6 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
@@ -48,11 +47,11 @@ public class PostReactionServiceImpl implements PostReactionService {
         NistagramUser owner = userRepository.findByContentContaining(dto.getPostId());
         validateUser(owner);
 
-        // TODO: fix lazy loading issues
         Comment comment = new Comment(dto.getText(), new Date(), getCurrentlyLoggedUser());
         List<Comment> comments = commentRepository.findByPostId(post.getId());
         comments.add(comment);
         post.setComments(comments);
+        commentRepository.save(comment);
         postRepository.save(post);
     }
 
@@ -63,12 +62,17 @@ public class PostReactionServiceImpl implements PostReactionService {
         NistagramUser owner = userRepository.findByContentContaining(postId);
         validateUser(owner);
 
-        // TODO: fix lazy loading issues
-        post.getDislikes().remove(user);
-        if (!post.getLikes().contains(user)) {
-            post.getLikes().add(user);
-            postRepository.save(post);
+        var dislikes = userRepository.findDislikesForPost(postId);
+        dislikes.remove(user);
+        post.setDislikes(dislikes);
+
+        var likes = userRepository.findLikesForPost(postId);
+        if (!likes.contains(user)) {
+            likes.add(user);
+            post.setLikes(likes);
         }
+
+        postRepository.save(post);
     }
 
     @Override
@@ -78,12 +82,17 @@ public class PostReactionServiceImpl implements PostReactionService {
         NistagramUser owner = userRepository.findByContentContaining(postId);
         validateUser(owner);
 
-        // TODO: fix lazy loading issues
-        post.getLikes().remove(user);
-        if (!post.getDislikes().contains(user)) {
-            post.getDislikes().add(user);
-            postRepository.save(post);
+        var likes = userRepository.findLikesForPost(postId);
+        likes.remove(user);
+        post.setLikes(likes);
+
+        var dislikes = userRepository.findDislikesForPost(postId);
+        if (!dislikes.contains(user)) {
+            dislikes.add(user);
+            post.setDislikes(dislikes);
         }
+
+        postRepository.save(post);
     }
 
     Post getPost(long postId) {
@@ -94,35 +103,45 @@ public class PostReactionServiceImpl implements PostReactionService {
         return post.get();
     }
 
-    void validateUser(NistagramUser owner) throws SSLException {
-        String follower = getCurrentlyLoggedUser().getUsername();
+    private void validateUser(NistagramUser owner) throws AccessToUserProfileDeniedException, SSLException {
+        NistagramUser user = getCurrentlyLoggedUser();
+
+        if (!owner.getProfilePrivate()) {
+            return;
+        }
+        if (owner.getUsername().equals(user.getUsername())) {
+            return;
+        }
+
+        String follower = user.getUsername();
         String followee = owner.getUsername();
 
-        // SSL
-        SslContext sslContext = SslContextBuilder
-                .forClient()
-                .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                .build();
-        HttpClient httpClient = HttpClient.create().secure(t -> t.sslContext(sslContext));
+        // SSL TODO: comment for deploy
+//        SslContext sslContext = SslContextBuilder
+//                .forClient()
+//                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+//                .build();
+//        HttpClient httpClient = HttpClient.create().secure(t -> t.sslContext(sslContext));
 
         // Creating web client.
         WebClient client = WebClient.builder()
                 .baseUrl(followerMicroserviceURI)
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
+//                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
 
         // Define a method.
-        Flux<FollowRequestAccessResponseDto> response = client.get()
+        var result = client.get()
                 .uri("/users/hasAccess/" + follower + "/" + followee)
                 .retrieve()
-                .bodyToFlux(FollowRequestAccessResponseDto.class);
+                .bodyToMono(FollowRequestAccessResponseDto.class)
+                .block();
 
-        response.subscribe(dto -> {
-            if (dto.isAccessAllowed()) {
-                return;
-            }
-            throw new AccessToUserProfileDeniedException(dto.getMessage());
-        });
+        if (result == null) {
+            throw new AccessToUserProfileDeniedException("No response");
+        }
+        if (!result.isAccessAllowed()) {
+            throw new AccessToUserProfileDeniedException(result.getMessage());
+        }
     }
 
     private NistagramUser getCurrentlyLoggedUser() {
