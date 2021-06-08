@@ -9,6 +9,7 @@ import org.nistagram.contentmicroservice.data.model.NistagramUser;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @TypeDefs({
@@ -44,7 +45,7 @@ public class Post extends Content {
             name = "paths",
             columnDefinition = "text[]"
     )
-    private List<String> paths;
+    private String[] paths;
 
     @Column(name = "about")
     private String about;
@@ -87,12 +88,24 @@ public class Post extends Content {
         this.comments = comments;
     }
 
-    public List<String> getPaths() {
+    public String[] getPaths() {
         return paths;
     }
 
-    public void setPaths(List<String> paths) {
+    public void setPaths(String[] paths) {
         this.paths = paths;
+    }
+
+    public List<String> getPathsList() {
+        return Arrays.asList(paths.clone());
+    }
+
+    public void setPathsList(List<String> paths) {
+        String[] array = new String[paths.size()];
+        for (int i = 1; i<paths.size(); i++) {
+            array[i] = paths.get(i);
+        }
+        this.paths = array;
     }
 
     @Override

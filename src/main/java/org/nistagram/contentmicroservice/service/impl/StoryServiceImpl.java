@@ -9,7 +9,6 @@ import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.repository.LocationRepository;
 import org.nistagram.contentmicroservice.data.repository.StoryRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
-import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.service.IStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,7 +84,7 @@ public class StoryServiceImpl implements IStoryService {
                     new LocationDto(location.getId(), location.getName());
             dtos.add(new StoryDto(story.getId(), story.getPath(),
                     locationDto,
-                    story.getTags(), story.getDate()));
+                    story.getTagsList(), story.getDate()));
         });
         return dtos;
     }
@@ -104,7 +103,7 @@ public class StoryServiceImpl implements IStoryService {
 
         story.setPath(random);
         story.setDate(Calendar.getInstance().getTime());
-        story.setTags(storyDto.getTags());
+        story.setTagsList(storyDto.getTags());
         story.setOnlyCloseFriends(storyDto.isCloseFriends());
         story.setLocation(locationRepository.findByName(storyDto.getLocation()));
         storyRepository.save(story);

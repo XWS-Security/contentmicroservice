@@ -15,38 +15,101 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/develop", produces = MediaType.APPLICATION_JSON_VALUE)
 public class DevelopController {
-
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final LocationRepository locationRepository;
     private final StoryRepository storyRepository;
+    private final RoleRepository roleRepository;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
-    public DevelopController(UserRepository userRepository, PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, StoryRepository storyRepository) {
+    public DevelopController(UserRepository userRepository, PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, StoryRepository storyRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.locationRepository = locationRepository;
         this.storyRepository = storyRepository;
+        this.roleRepository = roleRepository;
     }
 
     @GetMapping("/")
     public void putData() {
-        NistagramUser user1 = new NistagramUser();
-        NistagramUser user2 = new NistagramUser();
-        NistagramUser user3 = new NistagramUser();
+        Role role = new Role("NISTAGRAM_USER_ROLE");
+        List<Role> roles = new ArrayList<>();
+        roles.add(role);
+        roleRepository.save(role);
+
+        NistagramUser luka = new NistagramUser();
+        NistagramUser vlado = new NistagramUser();
+        NistagramUser vidoje = new NistagramUser();
+        NistagramUser milica = new NistagramUser();
+        NistagramUser duja = new NistagramUser();
+        NistagramUser kobra = new NistagramUser();
+
+        luka.setRoles(roles);
+        vlado.setRoles(roles);
+        vidoje.setRoles(roles);
+        milica.setRoles(roles);
+        duja.setRoles(roles);
+        kobra.setRoles(roles);
+
+        luka.setUsername("luka");
+        luka.setAbout("Zivot me nije mazio. Programer.");
+        luka.setProfilePictureName("Profile1.jpg");
+
+        vlado.setUsername("vlado");
+        vlado.setAbout("VOLEM SANGARIJEPE ŽDRIT!!!!");
+        vlado.setProfilePictureName("Profile2.jpg");
+
+        kobra.setUsername("kobra");
+        kobra.setAbout("Mozes da me povredis, ale ne i da me povredis!!!!");
+        kobra.setProfilePictureName("Profile3.jpg");
+
+        vidoje.setUsername("vidoje");
+        vidoje.setAbout("Ja msm da ovaj cak i ima.");
+        vidoje.setProfilePictureName("profile4.jpg");
+
+        milica.setUsername("milica");
+        milica.setAbout("Roli <3");
+        milica.setProfilePictureName("profile5.jpg");
+
+        duja.setUsername("duja");
+        duja.setAbout("Kyrie <3 Nba <3");
+        duja.setProfilePictureName("profile6.jpg");
+
+//        vlado.setCloseFriends(new ArrayList<>());
+//        vlado.setReportedComments(new HashMap<>());
+//        vlado.setSavedContent(new ArrayList<>());
+//        vlado.setSubscribedUsers(new ArrayList<>());
+
+//        kobra.setCloseFriends(new ArrayList<>());
+//        kobra.setReportedComments(new HashMap<>());
+//        kobra.setSavedContent(new ArrayList<>());
+//        kobra.setSubscribedUsers(new ArrayList<>());
+
+        userRepository.save(vlado);
+        userRepository.save(kobra);
+
+//        luka.setCloseFriends(new ArrayList<>());
+//        luka.setReportedComments(new HashMap<>());
+//        luka.setSavedContent(new ArrayList<>());
+//        luka.setSubscribedUsers(new ArrayList<>());
+
+        userRepository.save(luka);
+        userRepository.save(duja);
+        userRepository.save(milica);
+        userRepository.save(vidoje);
+
         var contentList = new ArrayList<Content>();
+        var posts = new ArrayList<Post>();
+        var stories = new ArrayList<Story>();
         var post1 = new Post();
         var post2 = new Post();
         var post3 = new Post();
@@ -97,19 +160,18 @@ public class DevelopController {
         post4.setId(4L);
         post5.setId(5L);
 
-        post1.setPaths(paths1);
-        post2.setPaths(paths2);
-        post3.setPaths(paths3);
-        post4.setPaths(paths4);
-        post5.setPaths(paths6);
+        post1.setPathsList(paths1);
+        post2.setPathsList(paths2);
+        post3.setPathsList(paths3);
+        post4.setPathsList(paths4);
+        post5.setPathsList(paths6);
 
         story1.setPath("image9.jpg");
         story1.setHighlights(true);
-        story1.setTags(tags);
+        story1.setTagsList(tags);
         story1.setLocation(location1);
         story2.setPath("image1.jpg");
         story2.setHighlights(true);
-        story2.setOnlyCloseFriends(true);
         story3.setPath("image2.jpg");
         story4.setPath("image3.jpg");
 
@@ -132,51 +194,29 @@ public class DevelopController {
         story3.setDate(date);
         story4.setDate(date1);
 
-        contentList.add(post1);
-        contentList.add(post2);
-        contentList.add(post3);
-        contentList.add(post4);
-        contentList.add(post5);
+        posts.add(post1);
+        posts.add(post2);
+        posts.add(post3);
+        posts.add(post4);
+        posts.add(post5);
 
-        contentList.add(story1);
-        contentList.add(story2);
-        contentList.add(story3);
-        contentList.add(story4);
+        stories.add(story1);
+        stories.add(story2);
+        stories.add(story3);
+        stories.add(story4);
 
-        user1.setContent(contentList);
-        user1.setUsername("_cvjeticaninLazo98");
-        user1.setAbout("Zivot me nije mazio. Programer.");
-        user1.setProfilePictureName("Profile1.jpg");
+        contentList.addAll(posts);
+        contentList.addAll(stories);
 
-        user2.setUsername("_cze_tka1389");
-        user2.setAbout("VOLEM SANGARIJEPE ŽDRIT!!!!");
-        user2.setProfilePictureName("Profile2.jpg");
-
-        user3.setUsername("ZDREBCEBA_KRF_03");
-        user3.setAbout("Mozes da me povredis, ale ne i da me povredis!!!!");
-        user3.setProfilePictureName("Profile3.jpg");
-
-        user2.setCloseFriends(new ArrayList<>());
-        user2.setReportedComments(new HashMap<>());
-        user2.setSavedContent(new ArrayList<>());
-        user2.setSubscribedUsers(new ArrayList<>());
-
-        user3.setCloseFriends(new ArrayList<>());
-        user3.setReportedComments(new HashMap<>());
-        user3.setSavedContent(new ArrayList<>());
-        user3.setSubscribedUsers(new ArrayList<>());
-
-        userRepository.save(user2);
-        userRepository.save(user3);
-
-        Comment comment1 = new Comment(111L, "Uffff preslatkasi ;)", date, user2);
-        Comment comment2 = new Comment(222L, "Aaaa nisaaaaam <333", date, user1);
-        Comment comment3 = new Comment(333L, "Ja sam zbognje naviko na tugu. :(", date, user3);
-
-        commentRepository.save(comment1);
-        commentRepository.save(comment2);
-        commentRepository.save(comment3);
         locationRepository.save(location1);
+        postRepository.saveAll(posts);
+        storyRepository.saveAll(stories);
+        luka.setContent(contentList);
+        userRepository.save(luka);
+
+        Comment comment1 = new Comment(111L, "Uffff preslatkasi ;)", date, vlado);
+        Comment comment2 = new Comment(222L, "Aaaa nisaaaaam <333", date, luka);
+        Comment comment3 = new Comment(333L, "Ja sam zbognje naviko na tugu. :(", date, kobra);
 
         var comments1 = new ArrayList<Comment>();
         comments1.add(comment1);
@@ -184,13 +224,14 @@ public class DevelopController {
         comments1.add(comment3);
 
         var likes1 = new ArrayList<NistagramUser>();
-        likes1.add(user2);
+        likes1.add(vlado);
         post1.setComments(comments1);
         post1.setLocation(location1);
-        post1.setTags(tags);
+        post1.setTagsList(tags);
         post1.setLikes(likes1);
         post1.setAbout("Last night a Dj saved my life <3 !!!");
 
+        commentRepository.saveAll(comments1);
         postRepository.save(post1);
         postRepository.save(post2);
         postRepository.save(post3);
@@ -200,16 +241,6 @@ public class DevelopController {
         storyRepository.save(story2);
         storyRepository.save(story3);
         storyRepository.save(story4);
-
-        var closeFriends = new ArrayList<NistagramUser>();
-        closeFriends.add(user2);
-
-        user1.setCloseFriends(closeFriends);
-        user1.setReportedComments(new HashMap<>());
-        user1.setSavedContent(new ArrayList<>());
-        user1.setSubscribedUsers(new ArrayList<>());
-
-        userRepository.save(user1);
     }
 
     @GetMapping("/auth")

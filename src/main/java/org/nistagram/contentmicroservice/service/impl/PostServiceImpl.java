@@ -50,7 +50,7 @@ public class PostServiceImpl implements IPostService {
     @Override
     public List<String> getImageNames(Long id) {
         var post = getPost(id);
-        return post.getPaths();
+        return post.getPathsList();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class PostServiceImpl implements IPostService {
         if (l != null) {
             location = new LocationDto(l);
         } else location = null;
-        var tags = post.getTags();
+        var tags = post.getTagsList();
         var date = post.getDate();
         var likes = post.getLikes().size();
         var dislikes = post.getDislikes().size();
@@ -113,12 +113,12 @@ public class PostServiceImpl implements IPostService {
             }
         });
 
-        post.setPaths(paths);
-        post.setTags(postDto.getTags());
+        post.setPathsList(paths);
+        post.setTagsList(postDto.getTags());
         post.setAbout(postDto.getAbout());
         post.setDate(Calendar.getInstance().getTime());
         post.setId(postId);
-        post.setLocation(locationRepository.findByName(postDto.getLocation()));
+//        post.setLocation(locationRepository.findByName(postDto.getLocation()));
         postRepository.save(post);
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
