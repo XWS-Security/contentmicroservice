@@ -39,7 +39,7 @@ public class ProfileServiceImpl implements IProfileService {
         var posts = user.getPosts();
         var paths = new ArrayList<ProfileImageDto>();
         for (Post post : posts) {
-            paths.add(new ProfileImageDto(post.getPaths()[0], post.getId()));
+            paths.add(new ProfileImageDto(post.getPaths().get(0), post.getId()));
         }
         return paths;
     }

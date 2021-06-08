@@ -50,7 +50,7 @@ public class PostServiceImpl implements IPostService {
     @Override
     public List<String> getImageNames(Long id) {
         var post = getPost(id);
-        return Arrays.asList(post.getPaths().clone());
+        return post.getPaths();
     }
 
     @Override
@@ -113,7 +113,7 @@ public class PostServiceImpl implements IPostService {
             }
         });
 
-        post.setPaths((String[]) paths.toArray());
+        post.setPaths(paths);
         post.setTags(postDto.getTags());
         post.setAbout(postDto.getAbout());
         post.setDate(Calendar.getInstance().getTime());

@@ -97,11 +97,11 @@ public class DevelopController {
         post4.setId(4L);
         post5.setId(5L);
 
-        post1.setPaths((String[]) paths1.toArray());
-        post2.setPaths((String[]) paths2.toArray());
-        post3.setPaths((String[]) paths3.toArray());
-        post4.setPaths((String[]) paths4.toArray());
-        post5.setPaths((String[]) paths6.toArray());
+        post1.setPaths(paths1);
+        post2.setPaths(paths2);
+        post3.setPaths(paths3);
+        post4.setPaths(paths4);
+        post5.setPaths(paths6);
 
         story1.setPath("image9.jpg");
         story1.setHighlights(true);

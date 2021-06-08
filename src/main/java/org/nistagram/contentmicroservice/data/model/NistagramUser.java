@@ -23,7 +23,7 @@ public class NistagramUser extends User {
             inverseJoinColumns = @JoinColumn(name = "subscribed_user_id", referencedColumnName = "id"))
     private List<NistagramUser> subscribedUsers;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_saved",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -44,13 +44,13 @@ public class NistagramUser extends User {
             inverseJoinColumns = {@JoinColumn(name = "content_id")})
     private List<Content> content;
 
-    @Column(name = "profilePicture")
+    @Column(name = "profile_picture")
     private String profilePictureName;
 
     @Column(name = "about")
     private String about;
 
-    @Column(name = "privateProfile")
+    @Column(name = "private_profile")
     private Boolean profilePrivate;
 
     public List<Post> getPosts() {

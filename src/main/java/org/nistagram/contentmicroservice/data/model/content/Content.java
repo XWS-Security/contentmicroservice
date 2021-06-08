@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import org.hibernate.annotations.SQLInsert;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -18,7 +19,7 @@ import java.util.Objects;
         )
 })
 @Entity
-@Table(name = "Content")
+@Table(name = "content")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "content_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Content {
@@ -33,6 +34,8 @@ public abstract class Content {
             name = "tags",
             columnDefinition = "text[]"
     )
+    @SQLInsert(sql = "", callable = false)
+    
     private List<String> tags;
 
     @Column(name = "date")
