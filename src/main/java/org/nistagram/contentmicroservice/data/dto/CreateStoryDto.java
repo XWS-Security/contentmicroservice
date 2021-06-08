@@ -10,15 +10,17 @@ public class CreateStoryDto {
     private List<String> tags;
     private boolean closeFriends;
     private List<MultipartFile> files;
+    private boolean highlights;
 
     public CreateStoryDto() {
     }
 
-    public CreateStoryDto(String location, List<String> tags, boolean closeFriends, List<MultipartFile> files) {
+    public CreateStoryDto(String location, List<String> tags, boolean closeFriends, List<MultipartFile> files, boolean highlights) {
         this.location = location;
         this.tags = tags;
         this.closeFriends = closeFriends;
         this.files = files;
+        this.highlights = highlights;
     }
 
     public String getLocation() {
@@ -51,5 +53,13 @@ public class CreateStoryDto {
 
     public void setFiles(List<MultipartFile> files) {
         this.files = files;
+    }
+
+    public boolean isHighlights() {
+        return highlights;
+    }
+
+    public void setHighlights(boolean highlights) {
+        this.highlights = highlights;
     }
 }

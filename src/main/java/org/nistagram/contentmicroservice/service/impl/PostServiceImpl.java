@@ -9,10 +9,7 @@ import org.nistagram.contentmicroservice.data.model.Location;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
-import org.nistagram.contentmicroservice.data.repository.CommentRepository;
-import org.nistagram.contentmicroservice.data.repository.LocationRepository;
-import org.nistagram.contentmicroservice.data.repository.PostRepository;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.*;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.PostDoesNotExistException;
 import org.nistagram.contentmicroservice.service.IPostService;
@@ -35,16 +32,18 @@ public class PostServiceImpl implements IPostService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
+    private final ContentRepository contentRepository;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, UserRepository userRepository) {
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, UserRepository userRepository, ContentRepository contentRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.locationRepository = locationRepository;
         this.userRepository = userRepository;
+        this.contentRepository = contentRepository;
     }
 
     @Override
@@ -119,11 +118,11 @@ public class PostServiceImpl implements IPostService {
         post.setDate(Calendar.getInstance().getTime());
         post.setId(postId);
 //        post.setLocation(locationRepository.findByName(postDto.getLocation()));
-        postRepository.save(post);
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Content> userContent = user.getContent();
+        List<Content> userContent = contentRepository.findAllByUserId(user.getId());
         userContent.add(post);
+        user.setContent(userContent);
         userRepository.save(user);
     }
 

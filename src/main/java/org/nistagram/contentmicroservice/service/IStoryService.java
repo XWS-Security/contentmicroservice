@@ -13,4 +13,6 @@ public interface IStoryService {
     void createStory(CreateStoryDto storyDto, List<MultipartFile> files) throws IOException;
 
     List<StoryDto> getHighlights(String username);
+
+    List<StoryDto> getLoggedUsersStories();
 }

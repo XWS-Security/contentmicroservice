@@ -1,5 +1,6 @@
 package org.nistagram.contentmicroservice.controller;
 
+import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.data.enums.CloseFriends;
 import org.nistagram.contentmicroservice.service.IInteractionService;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,17 @@ public class InteractionController {
         try {
             var status = interactionService.getCloseFriendStatus(username);
             return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/loggedUser")
+    public ResponseEntity<PostsUserDto> loggedUserInfo() {
+        try {
+            PostsUserDto info = interactionService.getLoggedUserInfo();
+            return new ResponseEntity<>(info, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

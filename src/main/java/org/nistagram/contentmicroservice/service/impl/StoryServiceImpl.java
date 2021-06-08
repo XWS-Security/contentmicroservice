@@ -4,11 +4,13 @@ import org.nistagram.contentmicroservice.data.dto.CreateStoryDto;
 import org.nistagram.contentmicroservice.data.dto.LocationDto;
 import org.nistagram.contentmicroservice.data.dto.StoryDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
-import org.nistagram.contentmicroservice.data.model.content.Story;
 import org.nistagram.contentmicroservice.data.model.content.Content;
+import org.nistagram.contentmicroservice.data.model.content.Story;
+import org.nistagram.contentmicroservice.data.repository.ContentRepository;
 import org.nistagram.contentmicroservice.data.repository.LocationRepository;
 import org.nistagram.contentmicroservice.data.repository.StoryRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.IStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,15 +33,17 @@ public class StoryServiceImpl implements IStoryService {
     private final LocationRepository locationRepository;
     private static final long DAY_IN_MILLISECONDS = 86400000L;
     private final StoryRepository storyRepository;
+    private final ContentRepository contentRepository;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
     @Autowired
-    public StoryServiceImpl(UserRepository userRepository, LocationRepository locationRepository, StoryRepository storyRepository) {
+    public StoryServiceImpl(UserRepository userRepository, LocationRepository locationRepository, StoryRepository storyRepository, ContentRepository contentRepository) {
         this.userRepository = userRepository;
         this.locationRepository = locationRepository;
         this.storyRepository = storyRepository;
+        this.contentRepository = contentRepository;
     }
 
     @Override
@@ -106,12 +110,22 @@ public class StoryServiceImpl implements IStoryService {
         story.setTagsList(storyDto.getTags());
         story.setOnlyCloseFriends(storyDto.isCloseFriends());
         story.setLocation(locationRepository.findByName(storyDto.getLocation()));
-        storyRepository.save(story);
+        story.setHighlights(storyDto.isHighlights());
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Content> userContent = user.getContent();
+        List<Content> userContent = contentRepository.findAllByUserId(user.getId());
         userContent.add(story);
+        user.setContent(userContent);
         userRepository.save(user);
+    }
+
+    @Override
+    public List<StoryDto> getLoggedUsersStories() {
+        NistagramUser user = getCurrentlyLoggedUser();
+        if(user==null){
+            throw new UserNotLogged();
+        }
+        return makeDtos(user.getStories());
     }
 
     private boolean passed24Hours(Date date) {
