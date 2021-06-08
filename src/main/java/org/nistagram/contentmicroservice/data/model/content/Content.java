@@ -66,7 +66,7 @@ public abstract class Content {
 
     public void setTagsList(List<String> tags) {
         String[] array = new String[tags.size()];
-        for (int i = 1; i<tags.size(); i++) {
+        for (int i = 0; i<tags.size(); i++) {
             array[i] = tags.get(i);
         }
         this.tags = array;

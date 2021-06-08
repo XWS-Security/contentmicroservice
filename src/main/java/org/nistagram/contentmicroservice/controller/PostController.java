@@ -91,6 +91,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             // TODO: log error
+            e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
@@ -103,6 +104,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             // TODO: log error
+            e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
@@ -115,6 +117,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             // TODO: log error
+            e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }

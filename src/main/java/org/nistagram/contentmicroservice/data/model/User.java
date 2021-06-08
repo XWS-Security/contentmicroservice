@@ -14,8 +14,8 @@ import java.util.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements UserDetails {
-    @Transient
-    private final String administrationRole = "NISTAGRAM_USER_ROLE";
+
+    private final transient String administrationRole = "NISTAGRAM_USER_ROLE";
 
     @Id
     @SequenceGenerator(name = "user_sequence_generator", sequenceName = "user_sequence", initialValue = 100)
