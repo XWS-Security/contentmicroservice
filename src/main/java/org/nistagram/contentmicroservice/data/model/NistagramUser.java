@@ -136,25 +136,4 @@ public class NistagramUser extends User {
     public void setProfilePrivate(Boolean profilePrivate) {
         this.profilePrivate = profilePrivate;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        NistagramUser that = (NistagramUser) o;
-        return Objects.equals(closeFriends, that.closeFriends) &&
-                Objects.equals(subscribedUsers, that.subscribedUsers) &&
-                Objects.equals(savedContent, that.savedContent) &&
-                Objects.equals(reportedComments, that.reportedComments) &&
-                Objects.equals(content, that.content) &&
-                Objects.equals(profilePictureName, that.profilePictureName) &&
-                Objects.equals(about, that.about) &&
-                Objects.equals(profilePrivate, that.profilePrivate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), closeFriends, subscribedUsers, savedContent, reportedComments, content, profilePictureName, about, profilePrivate);
-    }
 }
