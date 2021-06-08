@@ -11,6 +11,8 @@ import org.nistagram.contentmicroservice.service.IInteractionService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class InteractionServiceImpl implements IInteractionService {
 
@@ -27,8 +29,7 @@ public class InteractionServiceImpl implements IInteractionService {
             return CloseFriends.USER_UNSIGNED;
         if(loggedUser.getUsername().equals(userName))
             return CloseFriends.SAME_USER;
-        // TODO: fix exception here
-        if(loggedUser.getCloseFriends().stream().anyMatch(nistagramUser -> nistagramUser.getUsername().equals(userName))){
+        if(userRepository.getCloseFriends(loggedUser.getId()).contains(userRepository.findByUsername(userName))){
             return CloseFriends.CLOSE_FRIENDS;
         }
         return  CloseFriends.NOT_CLOSE;
@@ -40,10 +41,12 @@ public class InteractionServiceImpl implements IInteractionService {
         if(loggedUser==null)
             throw new UserNotLogged();
         var user = userRepository.findByUsername(username);
-        if(loggedUser.getCloseFriends().contains(user)){
+        List<NistagramUser> closeFriends = userRepository.getCloseFriends(loggedUser.getId());
+        if(!closeFriends.contains(user)){
             throw new UserAlreadyRemoved(username);
         }
-        loggedUser.getCloseFriends().remove(user);
+        closeFriends.remove(user);
+        loggedUser.setCloseFriends(closeFriends);
         userRepository.save(loggedUser);
     }
 
@@ -53,10 +56,12 @@ public class InteractionServiceImpl implements IInteractionService {
         if(loggedUser==null)
             throw new UserNotLogged();
         var user = userRepository.findByUsername(username);
-        if(!loggedUser.getCloseFriends().contains(user)){
+        List<NistagramUser> closeFriends = userRepository.getCloseFriends(loggedUser.getId());
+        if(closeFriends.contains(user)){
             throw new UserAlreadyAdded(username);
         }
-        loggedUser.getCloseFriends().add(user);
+        closeFriends.add(user);
+        loggedUser.setCloseFriends(closeFriends);
         userRepository.save(loggedUser);
     }
 
