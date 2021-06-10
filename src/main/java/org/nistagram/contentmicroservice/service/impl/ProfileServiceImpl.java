@@ -4,6 +4,7 @@ import org.nistagram.contentmicroservice.data.dto.ProfileImageDto;
 import org.nistagram.contentmicroservice.data.dto.ProfileInfoDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
+import org.nistagram.contentmicroservice.data.model.content.Story;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.service.IProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,14 +48,14 @@ public class ProfileServiceImpl implements IProfileService {
     @Override
     public ProfileInfoDto getUserInfo(String id) {
         NistagramUser user = userRepository.findByUsername(id);
-        System.out.println(user);
+
         var hasStories = false;
         var stories = user.getStories();
-        System.out.println(stories);
+
         if (stories.size() > 0) {
             hasStories = true;
         }
-        var hasHighlights = stories.stream().filter(story -> story.isHighlights()).count() > 0;
+        var hasHighlights = stories.stream().anyMatch(Story::isHighlights);
         return new ProfileInfoDto(getPathsOfFirstImagesInPosts(user), user.getAbout(), user.getProfilePictureName(), hasStories, hasHighlights);
     }
 

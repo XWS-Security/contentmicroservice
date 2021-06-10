@@ -30,7 +30,7 @@ public class StoryController {
             var stories = storyService.getActiveUserStories(username);
             return ResponseEntity.ok().body(stories);
         } catch (NotFoundException e) {
-            e.printStackTrace();
+            // TODO: log error
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -49,7 +49,7 @@ public class StoryController {
             var stories = storyService.getHighlights(username);
             return ResponseEntity.ok().body(stories);
         } catch (NotFoundException e) {
-            e.printStackTrace();
+            // TODO: log error
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -60,7 +60,7 @@ public class StoryController {
             var stories = storyService.getLoggedUsersStories();
             return ResponseEntity.ok().body(stories);
         } catch (NotFoundException e) {
-            e.printStackTrace();
+            // TODO: log error
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
