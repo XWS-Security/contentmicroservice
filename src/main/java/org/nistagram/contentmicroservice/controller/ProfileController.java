@@ -8,6 +8,8 @@ import org.nistagram.contentmicroservice.data.enums.CloseFriends;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.exceptions.UserDoesNotExistException;
 import org.nistagram.contentmicroservice.exceptions.UsernameAlreadyExistsException;
+import org.nistagram.contentmicroservice.logging.LoggerService;
+import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IInteractionService;
 import org.nistagram.contentmicroservice.service.IProfileService;
 import org.nistagram.contentmicroservice.service.UserService;
@@ -29,6 +31,7 @@ public class ProfileController {
     private final IProfileService profileService;
     private final UserService userService;
     private final ModelMapper modelMapper = new ModelMapper();
+    private final LoggerService loggerService = new LoggerServiceImpl(this.getClass());
 
     public ProfileController(IProfileService profileService, UserService userService) {
         this.profileService = profileService;
@@ -48,11 +51,15 @@ public class ProfileController {
     @PostMapping("/createNistagramUser")
     public ResponseEntity<String> createUser(@RequestBody @Valid UserDto userDto) {
         try {
+            loggerService.logCreateUser(userDto.getUsername());
             userService.saveUser(modelMapper.map(userDto, NistagramUser.class));
+            loggerService.logCreateUserSuccess(userDto.getUsername());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UsernameAlreadyExistsException e) {
+            loggerService.logCreateUserFailed(userDto.getUsername(), e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            loggerService.logCreateUserFailed(userDto.getUsername(), e.getMessage());
             return new ResponseEntity<>("Something went wrong.", HttpStatus.OK);
         }
     }
@@ -60,11 +67,15 @@ public class ProfileController {
     @PutMapping("/updateUser")
     public ResponseEntity<String> updateUser(@RequestBody @Valid EditUserDto editUserDto) {
         try {
+            loggerService.logUpdateUser(editUserDto.getUsername());
             userService.updateUser(editUserDto);
+            loggerService.logUpdateUserSuccess(editUserDto.getUsername());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UsernameAlreadyExistsException | UserDoesNotExistException e) {
+            loggerService.logCreateUserFailed(editUserDto.getUsername(), e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            loggerService.logCreateUserFailed(editUserDto.getUsername(), e.getMessage());
             return new ResponseEntity<>("Something went wrong.", HttpStatus.OK);
         }
     }

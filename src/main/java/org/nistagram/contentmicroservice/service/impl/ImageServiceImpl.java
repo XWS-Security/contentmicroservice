@@ -1,7 +1,7 @@
 package org.nistagram.contentmicroservice.service.impl;
 
 import org.nistagram.contentmicroservice.data.dto.MediaFileDto;
-import org.nistagram.contentmicroservice.exceptions.BadFileType;
+import org.nistagram.contentmicroservice.exceptions.BadFileTypeException;
 import org.nistagram.contentmicroservice.service.IImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -31,7 +31,7 @@ public class ImageServiceImpl implements IImageService {
             var stream = new InputStreamResource(new FileInputStream(file));
             return new MediaFileDto(stream, MediaType.APPLICATION_OCTET_STREAM, file);
         } else {
-            throw new BadFileType();
+            throw new BadFileTypeException();
         }
     }
 

@@ -1,5 +1,8 @@
 package org.nistagram.contentmicroservice.controller;
 
+import org.nistagram.contentmicroservice.exceptions.BadFileTypeException;
+import org.nistagram.contentmicroservice.logging.LoggerService;
+import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,21 +24,29 @@ public class ImageController {
         this.imageService = imageService;
     }
 
+    private final LoggerService loggerService = new LoggerServiceImpl(this.getClass());
+
     @GetMapping("/{name}")
     public ResponseEntity<Resource> getImage(@PathVariable String name) {
         try {
+            loggerService.logGetImage(name);
             var media = imageService.getImage(name);
             HttpHeaders responseHeaders = new HttpHeaders();
             responseHeaders.set("Content-Disposition",
                     "attachment; filename=\"" + media.getFile().getName() + "\"");
             responseHeaders.set("Content-Type", media.getType().toString());
             MediaType type = media.getType();
+            loggerService.logGetImageSuccess(name);
             return ResponseEntity.ok()
                     .headers(responseHeaders)
                     .contentLength(media.getFile().length())
                     .contentType(type)
                     .body(media.getStream());
+        } catch (BadFileTypeException e) {
+            loggerService.logGetImageFailed(name, e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            loggerService.logGetImageFailed(name, e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
