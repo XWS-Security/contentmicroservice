@@ -95,7 +95,6 @@ public class PostController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             // TODO: log error
-            e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
@@ -111,7 +110,6 @@ public class PostController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             // TODO: log error
-            e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
@@ -127,7 +125,6 @@ public class PostController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             // TODO: log error
-            e.printStackTrace();
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
