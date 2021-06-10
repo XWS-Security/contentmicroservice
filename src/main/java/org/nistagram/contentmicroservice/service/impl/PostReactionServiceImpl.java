@@ -116,17 +116,17 @@ public class PostReactionServiceImpl implements PostReactionService {
         String follower = user.getUsername();
         String followee = owner.getUsername();
 
-        // SSL TODO: comment for deploy
-//        SslContext sslContext = SslContextBuilder
-//                .forClient()
-//                .trustManager(InsecureTrustManagerFactory.INSTANCE)
-//                .build();
-//        HttpClient httpClient = HttpClient.create().secure(t -> t.sslContext(sslContext));
+        // SSL
+        SslContext sslContext = SslContextBuilder
+                .forClient()
+                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                .build();
+        HttpClient httpClient = HttpClient.create().secure(t -> t.sslContext(sslContext));
 
         // Creating web client.
         WebClient client = WebClient.builder()
                 .baseUrl(followerMicroserviceURI)
-//                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
 
         // Define a method.
