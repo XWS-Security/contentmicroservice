@@ -7,6 +7,8 @@ import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
+import org.nistagram.contentmicroservice.logging.LoggerService;
+import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IFavouritesService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class FavouritesServiceImpl implements IFavouritesService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final LoggerService loggerService = new LoggerServiceImpl(this.getClass());
 
     public FavouritesServiceImpl(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
@@ -58,6 +61,7 @@ public class FavouritesServiceImpl implements IFavouritesService {
     public void saveOrRemoveFavourite(Long postId) {
         var user = getCurrentlyLoggedUser();
         if (user == null) {
+            loggerService.logTokenException("Session has expired.");
             throw new UserNotLogged();
         }
         var postOptional = postRepository.findById(postId);
@@ -67,9 +71,13 @@ public class FavouritesServiceImpl implements IFavouritesService {
         var post = postOptional.get();
         List<Post> favourites = postRepository.findAllFavourites(user.getId());
         if (favourites.contains(post)) {
+            loggerService.logPostRemoveFromFavourites(postId);
             favourites.remove(post);
+            loggerService.logPostRemoveFromFavouritesSuccess(postId);
         } else {
+            loggerService.logPostSaveToFavourites(postId);
             favourites.add(post);
+            loggerService.logPostSaveToFavouritesSuccess(postId);
         }
         user.setSavedContent(favourites);
         userRepository.save(user);

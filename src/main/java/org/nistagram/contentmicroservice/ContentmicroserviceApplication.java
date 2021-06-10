@@ -16,7 +16,7 @@ import java.util.List;
 public class ContentmicroserviceApplication {
 
     public static void main(String[] args) {
-//        SpringApplication.run(ContentmicroserviceApplication.class, args);
+        //SpringApplication.run(ContentmicroserviceApplication.class, args);
         // TODO: Comment out if data already exists
         ApplicationContext ctx = SpringApplication.run(ContentmicroserviceApplication.class, args);
 
