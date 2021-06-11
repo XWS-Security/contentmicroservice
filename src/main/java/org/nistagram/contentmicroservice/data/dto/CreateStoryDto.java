@@ -1,15 +1,23 @@
 package org.nistagram.contentmicroservice.data.dto;
 
+import org.nistagram.contentmicroservice.security.customvalidators.TagsValidator;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 public class CreateStoryDto {
 
+    @Pattern(regexp = "^[^<>]+", message = "Invalid character!")
     private String location;
+
+    @TagsValidator
     private List<String> tags;
+
     private boolean closeFriends;
+
     private List<MultipartFile> files;
+
     private boolean highlights;
 
     public CreateStoryDto() {

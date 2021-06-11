@@ -85,7 +85,7 @@ public class PostController {
 
     @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
     @PostMapping(path = "/uploadContent", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> uploadContent(@RequestPart("obj") CreatePostDto dto, @RequestPart("photos") List<MultipartFile> files) throws SSLException {
+    public ResponseEntity<String> uploadContent(@RequestPart("obj") @Valid CreatePostDto dto, @RequestPart("photos") List<MultipartFile> files) throws SSLException {
         try {
             var username = getCurrentlyLoggedUser().getUsername();
             loggerService.logUploadPost(username);

@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class StoryController {
 
     @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
     @PostMapping(path = "/uploadContent", consumes = {"multipart/form-data"})
-    public ResponseEntity<String> uploadContent(@RequestPart("obj") CreateStoryDto dto, @RequestPart("photos") List<MultipartFile> files) throws IOException {
+    public ResponseEntity<String> uploadContent(@RequestPart("obj") @Valid CreateStoryDto dto, @RequestPart("photos") List<MultipartFile> files) throws IOException {
         try {
             var username = getCurrentlyLoggedUser().getUsername();
             loggerService.logUploadStory(username);
