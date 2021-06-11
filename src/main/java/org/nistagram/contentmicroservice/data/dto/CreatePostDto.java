@@ -1,16 +1,25 @@
 package org.nistagram.contentmicroservice.data.dto;
 
+import org.nistagram.contentmicroservice.security.customvalidators.TagsValidator;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.List;
 
 public class CreatePostDto {
 
     private List<MultipartFile> files;
+
+    @TagsValidator
     private List<String> tags;
+
     private Date date;
+
+    @Pattern(regexp = "^[^<>]+", message = "Invalid character!")
     private String about;
+
+    @Pattern(regexp = "^[^<>]+", message = "Invalid character!")
     private String location;
 
     public CreatePostDto() {
