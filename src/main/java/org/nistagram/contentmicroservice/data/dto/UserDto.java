@@ -1,12 +1,14 @@
 package org.nistagram.contentmicroservice.data.dto;
 
+import org.nistagram.contentmicroservice.util.Constants;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 public class UserDto implements Serializable {
     @NotNull
-    @Pattern(regexp = "^[a-zA-Z0-9_]{2,12}", message = "Username must be 2 to 12 characters long and can contain only letters, numbers and an underscore.")
+    @Pattern(regexp = Constants.USERNAME_PATTERN, message = Constants.USERNAME_INVALID_MESSAGE)
     private String username;
     private boolean profilePrivate = false;
 

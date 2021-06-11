@@ -3,6 +3,8 @@ package org.nistagram.contentmicroservice.logging;
 public interface LoggerService {
     void logException(String message);
 
+    void logValidationFailed(String message);
+
     void logTokenException(String message);
 
     void logObjectNotFoundException(String message);

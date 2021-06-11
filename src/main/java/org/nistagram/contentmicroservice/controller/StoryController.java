@@ -8,20 +8,26 @@ import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.logging.LoggerService;
 import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IStoryService;
+import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/story", produces = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 public class StoryController {
 
     private final IStoryService storyService;
@@ -32,7 +38,7 @@ public class StoryController {
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<List<StoryDto>> getStories(@PathVariable String username) {
+    public ResponseEntity<List<StoryDto>> getStories(@PathVariable @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE) String username) {
         try {
             loggerService.getStories(username);
             var stories = storyService.getActiveUserStories(username);
@@ -56,10 +62,10 @@ public class StoryController {
         } catch (UserNotLogged e) {
             loggerService.logUploadStoryFailed(e.getMessage());
             loggerService.logTokenException("User not logged in.");
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             loggerService.logUploadStoryFailed(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -91,11 +97,25 @@ public class StoryController {
         } catch (UserNotLogged e) {
             loggerService.getStoriesFailed(e.getMessage());
             loggerService.logTokenException(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             loggerService.getStoriesFailed(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
     }
 
     private NistagramUser getCurrentlyLoggedUser() {

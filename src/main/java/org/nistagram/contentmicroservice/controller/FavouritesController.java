@@ -6,15 +6,21 @@ import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.logging.LoggerService;
 import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IFavouritesService;
+import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/favourites", produces = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 public class FavouritesController {
 
     private final IFavouritesService favouritesService;
@@ -35,7 +41,7 @@ public class FavouritesController {
     }
 
     @PutMapping("/{postId}")
-    public ResponseEntity<String> saveOrRemoveFavourite(@PathVariable Long postId) {
+    public ResponseEntity<String> saveOrRemoveFavourite(@PathVariable @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE) Long postId) {
         try {
             favouritesService.saveOrRemoveFavourite(postId);
             return ResponseEntity.ok().body("Post saved or removed from favourites");
@@ -49,7 +55,7 @@ public class FavouritesController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<Boolean> isFavourite(@PathVariable Long postId) {
+    public ResponseEntity<Boolean> isFavourite(@PathVariable @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE) Long postId) {
         try {
             loggerService.logCheckingIfPostIsFavourite(postId);
             var isFavourite = favouritesService.inFavourites(postId);
@@ -63,7 +69,21 @@ public class FavouritesController {
         catch (Exception e){
             loggerService.logCheckingIfPostIsFavouriteFailed(postId, e.getMessage());
             loggerService.logException(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
     }
 }
