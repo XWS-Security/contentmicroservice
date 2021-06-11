@@ -1,12 +1,14 @@
 package org.nistagram.contentmicroservice.data.dto;
 
+import org.nistagram.contentmicroservice.util.Constants;
+
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 public class FollowRequestAccessResponseDto implements Serializable {
     private boolean accessAllowed;
 
-    @Pattern(regexp = "^[^<>]")
+    @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE)
     private String message;
 
     public FollowRequestAccessResponseDto() {

@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.data.dto;
 
 import org.nistagram.contentmicroservice.security.customvalidators.TagsValidator;
+import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Pattern;
@@ -16,10 +17,10 @@ public class CreatePostDto {
 
     private Date date;
 
-    @Pattern(regexp = "^[^<>]+", message = "Invalid character!")
+    @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE)
     private String about;
 
-    @Pattern(regexp = "^[^<>]+", message = "Invalid character!")
+    @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE)
     private String location;
 
     public CreatePostDto() {

@@ -9,21 +9,28 @@ import org.nistagram.contentmicroservice.logging.LoggerService;
 import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.nistagram.contentmicroservice.service.PostReactionService;
+import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.net.ssl.SSLException;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/post", produces = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 public class PostController {
 
     private final IPostService postService;
@@ -39,7 +46,7 @@ public class PostController {
     }
 
     @GetMapping("/images/{id}")
-    public ResponseEntity<List<String>> getImages(@PathVariable Long id) {
+    public ResponseEntity<List<String>> getImages(@PathVariable("id") @Min(1L) Long id) {
         try {
             var list = postService.getImageNames(id);
             return ResponseEntity.ok().body(list);
@@ -49,7 +56,7 @@ public class PostController {
     }
 
     @GetMapping("/comment/{id}")
-    public ResponseEntity<CommentDto> getComment(@PathVariable Long id) {
+    public ResponseEntity<CommentDto> getComment(@PathVariable("id") @Min(1L) Long id) {
         try {
             var comment = postService.getComment(id);
             return ResponseEntity.ok().body(comment);
@@ -64,7 +71,7 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPost(@PathVariable Long id) {
+    public ResponseEntity<PostDto> getPost(@PathVariable("id") @Min(1L) Long id) {
         try {
             var post = postService.getPostInfo(id);
             return ResponseEntity.ok().body(post);
@@ -74,7 +81,7 @@ public class PostController {
     }
 
     @GetMapping("user/{id}")
-    public ResponseEntity<PostsUserDto> getPostsUser(@PathVariable Long id) {
+    public ResponseEntity<PostsUserDto> getPostsUser(@PathVariable("id") @Min(1L) Long id) {
         try {
             var post = postService.getPostsUser(id);
             return ResponseEntity.ok().body(post);
@@ -94,10 +101,10 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UserNotLogged e) {
             loggerService.logTokenException(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             loggerService.logUploadPostSuccess(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -112,7 +119,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UserNotLogged e) {
             loggerService.logTokenException(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (AccessToUserProfileDeniedException e) {
             loggerService.logCommentFailed(dto.getPostId(), e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
@@ -133,7 +140,7 @@ public class PostController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UserNotLogged e) {
             loggerService.logTokenException(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (AccessToUserProfileDeniedException e) {
             loggerService.logLikeFailed(dto.getPostId(), e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
@@ -148,20 +155,18 @@ public class PostController {
     public ResponseEntity<String> dislike(@RequestBody @Valid UploadReactionToPostDto dto) {
         try {
             var username = getCurrentlyLoggedUser().getUsername();
-            loggerService.logDislike(username,dto.getPostId());
+            loggerService.logDislike(username, dto.getPostId());
             postReactionService.dislike(dto.getPostId());
             loggerService.logDislikeSuccess(username, dto.getPostId());
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        catch (UserNotLogged e){
+        } catch (UserNotLogged e) {
             loggerService.logTokenException(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        catch (AccessToUserProfileDeniedException e) {
-            loggerService.logDislikeFailed(dto.getPostId(),e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (AccessToUserProfileDeniedException e) {
+            loggerService.logDislikeFailed(dto.getPostId(), e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
-            loggerService.logDislikeFailed(dto.getPostId(),e.getMessage());
+            loggerService.logDislikeFailed(dto.getPostId(), e.getMessage());
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
     }
@@ -172,5 +177,19 @@ public class PostController {
             return (NistagramUser) object;
         }
         throw new UserNotLogged();
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
     }
 }

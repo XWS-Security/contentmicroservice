@@ -4,28 +4,32 @@ import org.modelmapper.ModelMapper;
 import org.nistagram.contentmicroservice.data.dto.EditUserDto;
 import org.nistagram.contentmicroservice.data.dto.ProfileInfoDto;
 import org.nistagram.contentmicroservice.data.dto.UserDto;
-import org.nistagram.contentmicroservice.data.enums.CloseFriends;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.exceptions.UserDoesNotExistException;
 import org.nistagram.contentmicroservice.exceptions.UsernameAlreadyExistsException;
 import org.nistagram.contentmicroservice.logging.LoggerService;
 import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
-import org.nistagram.contentmicroservice.service.IInteractionService;
 import org.nistagram.contentmicroservice.service.IProfileService;
 import org.nistagram.contentmicroservice.service.UserService;
+import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.constraints.Pattern;
 import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 public class ProfileController {
 
     private final IProfileService profileService;
@@ -38,13 +42,14 @@ public class ProfileController {
         this.userService = userService;
     }
 
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ProfileInfoDto> getUserInfo(@PathVariable String id) {
+    @GetMapping(value = "/{username}")
+    public ResponseEntity<ProfileInfoDto> getUserInfo(@PathVariable("username") @Pattern(regexp = Constants.USERNAME_PATTERN, message = Constants.USERNAME_INVALID_MESSAGE) String id) {
         try {
             var dtos = profileService.getUserInfo(id);
             return new ResponseEntity<>(dtos, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            loggerService.logException(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -85,5 +90,19 @@ public class ProfileController {
     public ResponseEntity<String> setProfilePicture(@RequestPart("photos") List<MultipartFile> files) throws IOException {
         profileService.setProfilePicture(files);
         return null;
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
     }
 }

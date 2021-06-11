@@ -9,14 +9,21 @@ import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.logging.LoggerService;
 import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IInteractionService;
+import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Pattern;
 
 @RestController
 @RequestMapping(value = "/interaction", produces = MediaType.APPLICATION_JSON_VALUE)
+@Validated
 public class InteractionController {
 
     private final IInteractionService interactionService;
@@ -27,7 +34,7 @@ public class InteractionController {
     }
 
     @GetMapping("/closeFriends/{username}")
-    public ResponseEntity<CloseFriends> closeFriendStatus(@PathVariable String username) {
+    public ResponseEntity<CloseFriends> closeFriendStatus(@PathVariable @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE) String username) {
         try {
             var status = interactionService.getCloseFriendStatus(username);
             return new ResponseEntity<>(status, HttpStatus.OK);
@@ -49,7 +56,7 @@ public class InteractionController {
     }
 
     @PutMapping("/closeFriends/remove/{username}")
-    public ResponseEntity<String> removeCloseFriend(@PathVariable String username) {
+    public ResponseEntity<String> removeCloseFriend(@PathVariable @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE) String username) {
         try {
             var loggedUserUsername = getCurrentlyLoggedUser().getUsername();
             loggerService.logAddingToCloseFriend(loggedUserUsername,username);
@@ -58,11 +65,11 @@ public class InteractionController {
             return new ResponseEntity<>(HttpStatus.OK);
         }catch (UserAlreadyRemoved e){
             loggerService.logRemovingCloseFriendFailed(username, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }catch (UserNotLogged e){
             loggerService.logTokenException(e.getMessage());
             loggerService.logRemovingCloseFriendFailed(username, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
             loggerService.logRemovingCloseFriendFailed(username, e.getMessage());
@@ -71,7 +78,7 @@ public class InteractionController {
     }
 
     @PutMapping("/closeFriends/add/{username}")
-    public ResponseEntity<CloseFriends> addCloseFriend(@PathVariable String username) {
+    public ResponseEntity<CloseFriends> addCloseFriend(@PathVariable @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE) String username) {
         try {
             var loggedUserUsername = getCurrentlyLoggedUser().getUsername();
             loggerService.logAddingToCloseFriend( getCurrentlyLoggedUser().getUsername(),username);
@@ -98,5 +105,19 @@ public class InteractionController {
             return (NistagramUser) object;
         }
         throw new UserNotLogged();
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        loggerService.logValidationFailed(e.getMessage());
+        return new ResponseEntity<>("Invalid characters in request", HttpStatus.BAD_REQUEST);
     }
 }
