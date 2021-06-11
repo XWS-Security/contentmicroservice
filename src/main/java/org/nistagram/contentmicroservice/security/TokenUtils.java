@@ -3,6 +3,8 @@ package org.nistagram.contentmicroservice.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.nistagram.contentmicroservice.data.model.User;
+import org.nistagram.contentmicroservice.logging.LoggerService;
+import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,8 @@ public class TokenUtils {
 
     @Value("Authorization")
     private String AUTH_HEADER;
+
+    private final LoggerService loggerService = new LoggerServiceImpl(this.getClass());
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         User user = (User) userDetails;
@@ -75,7 +79,7 @@ public class TokenUtils {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
-            // TODO: log token error
+            loggerService.logTokenException(e.getMessage());
             claims = null;
         }
         return claims;

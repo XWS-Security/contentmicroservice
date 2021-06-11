@@ -7,10 +7,9 @@ import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.logging.LoggerService;
 import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
+import org.nistagram.contentmicroservice.security.TokenUtils;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.nistagram.contentmicroservice.service.PostReactionService;
-import org.nistagram.contentmicroservice.util.Constants;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.net.ssl.SSLException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController
@@ -35,14 +34,13 @@ public class PostController {
 
     private final IPostService postService;
     private final PostReactionService postReactionService;
+    private final TokenUtils tokenUtils;
     private final LoggerService loggerService = new LoggerServiceImpl(this.getClass());
 
-    @Value("${PROJECT_PATH}")
-    private String project_path;
-
-    public PostController(IPostService postService, PostReactionService postReactionService) {
+    public PostController(IPostService postService, PostReactionService postReactionService, TokenUtils tokenUtils) {
         this.postService = postService;
         this.postReactionService = postReactionService;
+        this.tokenUtils = tokenUtils;
     }
 
     @GetMapping("/images/{id}")
@@ -110,11 +108,12 @@ public class PostController {
 
     @PostMapping(path = "/comment")
     @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
-    public ResponseEntity<String> comment(@RequestBody @Valid UploadCommentDto dto) {
+    public ResponseEntity<String> comment(@RequestBody @Valid UploadCommentDto dto, HttpServletRequest request) {
         try {
             var username = getCurrentlyLoggedUser().getUsername();
             loggerService.logComment(dto.getPostId(), username);
-            postReactionService.comment(dto);
+            String token = tokenUtils.getToken(request);
+            postReactionService.comment(dto, token);
             loggerService.logCommentSuccess(dto.getPostId(), username);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UserNotLogged e) {
@@ -131,11 +130,12 @@ public class PostController {
 
     @PutMapping(path = "/like")
     @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
-    public ResponseEntity<String> like(@RequestBody @Valid UploadReactionToPostDto dto) {
+    public ResponseEntity<String> like(@RequestBody @Valid UploadReactionToPostDto dto, HttpServletRequest request) {
         try {
             var username = getCurrentlyLoggedUser().getUsername();
             loggerService.logLike(username, dto.getPostId());
-            postReactionService.like(dto.getPostId());
+            String token = tokenUtils.getToken(request);
+            postReactionService.like(dto.getPostId(), token);
             loggerService.logLikeSuccess(username, dto.getPostId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UserNotLogged e) {
@@ -152,11 +152,12 @@ public class PostController {
 
     @PutMapping(path = "/dislike")
     @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
-    public ResponseEntity<String> dislike(@RequestBody @Valid UploadReactionToPostDto dto) {
+    public ResponseEntity<String> dislike(@RequestBody @Valid UploadReactionToPostDto dto, HttpServletRequest request) {
         try {
             var username = getCurrentlyLoggedUser().getUsername();
             loggerService.logDislike(username, dto.getPostId());
-            postReactionService.dislike(dto.getPostId());
+            String token = tokenUtils.getToken(request);
+            postReactionService.dislike(dto.getPostId(), token);
             loggerService.logDislikeSuccess(username, dto.getPostId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (UserNotLogged e) {

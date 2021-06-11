@@ -42,10 +42,10 @@ public class PostReactionServiceImpl implements PostReactionService {
     }
 
     @Override
-    public void comment(UploadCommentDto dto) throws AccessToUserProfileDeniedException, SSLException {
+    public void comment(UploadCommentDto dto, String token) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(dto.getPostId());
         NistagramUser owner = userRepository.findByContentContaining(dto.getPostId());
-        validateUser(owner);
+        validateUser(owner, token);
 
         Comment comment = new Comment(dto.getText(), new Date(), getCurrentlyLoggedUser());
         List<Comment> comments = commentRepository.findByPostId(post.getId());
@@ -56,11 +56,11 @@ public class PostReactionServiceImpl implements PostReactionService {
     }
 
     @Override
-    public void like(long postId) throws AccessToUserProfileDeniedException, SSLException {
+    public void like(long postId, String token) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(postId);
         NistagramUser user = getCurrentlyLoggedUser();
         NistagramUser owner = userRepository.findByContentContaining(postId);
-        validateUser(owner);
+        validateUser(owner, token);
 
         var dislikes = userRepository.findDislikesForPost(postId);
         dislikes.remove(user);
@@ -76,11 +76,11 @@ public class PostReactionServiceImpl implements PostReactionService {
     }
 
     @Override
-    public void dislike(long postId) throws AccessToUserProfileDeniedException, SSLException {
+    public void dislike(long postId, String token) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(postId);
         NistagramUser user = getCurrentlyLoggedUser();
         NistagramUser owner = userRepository.findByContentContaining(postId);
-        validateUser(owner);
+        validateUser(owner, token);
 
         var likes = userRepository.findLikesForPost(postId);
         likes.remove(user);
@@ -103,7 +103,7 @@ public class PostReactionServiceImpl implements PostReactionService {
         return post.get();
     }
 
-    private void validateUser(NistagramUser owner) throws AccessToUserProfileDeniedException, SSLException {
+    private void validateUser(NistagramUser owner, String token) throws AccessToUserProfileDeniedException, SSLException {
         NistagramUser user = getCurrentlyLoggedUser();
 
         if (!owner.getProfilePrivate()) {
@@ -132,6 +132,7 @@ public class PostReactionServiceImpl implements PostReactionService {
         // Define a method.
         var result = client.get()
                 .uri("/users/hasAccess/" + follower + "/" + followee)
+                .headers(h -> h.setBearerAuth(token))
                 .retrieve()
                 .bodyToMono(FollowRequestAccessResponseDto.class)
                 .block();
