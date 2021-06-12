@@ -113,7 +113,6 @@ public class PostReactionServiceImpl implements PostReactionService {
             return;
         }
 
-        String follower = user.getUsername();
         String followee = owner.getUsername();
 
         // SSL
@@ -131,7 +130,7 @@ public class PostReactionServiceImpl implements PostReactionService {
 
         // Define a method.
         var result = client.get()
-                .uri("/users/hasAccess/" + follower + "/" + followee)
+                .uri("/users/hasAccess/" + followee)
                 .headers(h -> h.setBearerAuth(token))
                 .retrieve()
                 .bodyToMono(FollowRequestAccessResponseDto.class)
