@@ -9,6 +9,7 @@ import org.nistagram.contentmicroservice.exceptions.UserDoesNotExistException;
 import org.nistagram.contentmicroservice.exceptions.UsernameAlreadyExistsException;
 import org.nistagram.contentmicroservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(EditUserDto editUserDto) {
-        NistagramUser loadedUser = userRepository.findByUsername(editUserDto.getOldUsername());
+        NistagramUser loadedUser = getCurrentlyLoggedUser();
         if (loadedUser == null) {
             throw new UserDoesNotExistException();
         }
@@ -47,7 +48,6 @@ public class UserServiceImpl implements UserService {
         }
         loadedUser.setProfilePrivate(editUserDto.isProfilePrivate());
         loadedUser.setUsername(editUserDto.getUsername());
-        System.out.println(editUserDto.getAbout());
         loadedUser.setAbout(editUserDto.getAbout());
         userRepository.save(loadedUser);
     }
@@ -55,5 +55,13 @@ public class UserServiceImpl implements UserService {
     private boolean isUsernameAvailable(String username) {
         NistagramUser user = userRepository.findByUsername(username);
         return user == null;
+    }
+
+    private NistagramUser getCurrentlyLoggedUser() {
+        var object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (NistagramUser.class.isInstance(object)) {
+            return (NistagramUser) object;
+        }
+        return null;
     }
 }

@@ -72,5 +72,4 @@ public class ProfileServiceImpl implements IProfileService {
         user.setProfilePictureName(random);
         userRepository.save(user);
     }
-
 }
