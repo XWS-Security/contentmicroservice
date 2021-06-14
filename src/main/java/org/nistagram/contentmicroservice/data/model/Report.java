@@ -1,5 +1,7 @@
 package org.nistagram.contentmicroservice.data.model;
 
+import org.nistagram.contentmicroservice.data.model.content.Content;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,12 +16,19 @@ public class Report {
     @Column(name = "reason")
     private String reason;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Content content;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private NistagramUser user;
+
     public Report() {
     }
 
-    public Report(Long id, String reason) {
-        this.id = id;
+    public Report(String reason, Content content, NistagramUser user) {
         this.reason = reason;
+        this.content = content;
+        this.user = user;
     }
 
     public Long getId() {
@@ -36,5 +45,21 @@ public class Report {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public Content getContent() {
+        return content;
+    }
+
+    public void setContent(Content content) {
+        this.content = content;
+    }
+
+    public NistagramUser getUser() {
+        return user;
+    }
+
+    public void setUser(NistagramUser user) {
+        this.user = user;
     }
 }

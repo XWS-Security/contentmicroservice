@@ -31,13 +31,6 @@ public class NistagramUser extends User {
     private List<Post> savedContent;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_content_report",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "content_report_id", referencedColumnName = "id")})
-    @MapKeyJoinColumn(name = "content_id")
-    private Map<Content, Report> reportedComments;
-
-    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_content",
             joinColumns = {@JoinColumn(name = "user_id")},
@@ -69,7 +62,6 @@ public class NistagramUser extends User {
         this.closeFriends = new ArrayList<>();
         this.subscribedUsers = new ArrayList<>();
         this.savedContent = new ArrayList<>();
-        this.reportedComments = new HashMap<>();
         this.content = new ArrayList<>();
     }
 
@@ -95,14 +87,6 @@ public class NistagramUser extends User {
 
     public void setSavedContent(List<Post> savedContent) {
         this.savedContent = savedContent;
-    }
-
-    public Map<Content, Report> getReportedComments() {
-        return reportedComments;
-    }
-
-    public void setReportedComments(Map<Content, Report> reportedComments) {
-        this.reportedComments = reportedComments;
     }
 
     public List<Content> getContent() {
