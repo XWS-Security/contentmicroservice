@@ -70,6 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/post/**").permitAll()
                 .antMatchers("/interaction/**").permitAll()
                 .antMatchers("/favourites/**").permitAll()
+                .antMatchers("/subscribe/**").permitAll()
                 .antMatchers("/post/uploadContent").hasAuthority("NISTAGRAM_USER_ROLE")
                 .antMatchers("/profile/updateUser").hasAuthority("NISTAGRAM_USER_ROLE")
                 .anyRequest().authenticated().and()
