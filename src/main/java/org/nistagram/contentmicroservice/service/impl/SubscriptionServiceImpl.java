@@ -24,8 +24,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         NistagramUser subscribedFrom = userRepository.findByUsername(dto.getSubscribedFrom());
 
         List<NistagramUser> subscriptions = subscribedTo.getSubscribedUsers();
-        subscriptions.add(subscribedFrom);
-        userRepository.save(subscribedTo);
+        if (!subscriptions.contains(subscribedFrom)) {
+            subscriptions.add(subscribedFrom);
+            userRepository.save(subscribedTo);
+        }
     }
 
     @Override
