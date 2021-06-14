@@ -16,10 +16,12 @@ public class Report {
     @Column(name = "reason")
     private String reason;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "content_id")
     private Content content;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private NistagramUser user;
 
     public Report() {
