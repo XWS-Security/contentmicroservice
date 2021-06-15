@@ -3,8 +3,7 @@ package org.nistagram.contentmicroservice.service.impl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import org.nistagram.contentmicroservice.data.dto.FollowRequestAccessResponseDto;
-import org.nistagram.contentmicroservice.data.dto.UploadCommentDto;
+import org.nistagram.contentmicroservice.data.dto.*;
 import org.nistagram.contentmicroservice.data.model.Comment;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
@@ -22,6 +21,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -93,6 +93,38 @@ public class PostReactionServiceImpl implements PostReactionService {
         }
 
         postRepository.save(post);
+    }
+
+    @Override
+    public List<PostImageLinkDto> getLikedPosts() {
+        ArrayList<Post> allPosts = (ArrayList<Post>) postRepository.findAll();
+        NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ArrayList<PostImageLinkDto> likedPosts = new ArrayList<>();
+
+        allPosts.forEach(post -> {
+            if (post.getLikes().contains(user)) {
+                var postOwner = userRepository.findByContentContaining(post.getId());
+                likedPosts.add(new PostImageLinkDto(post.getPathsList().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
+            }
+        });
+
+        return likedPosts;
+    }
+
+    @Override
+    public List<PostImageLinkDto> getDislikedPosts() {
+        ArrayList<Post> allPosts = (ArrayList<Post>) postRepository.findAll();
+        NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ArrayList<PostImageLinkDto> dislikedPosts = new ArrayList<>();
+
+        allPosts.forEach(post -> {
+            if (post.getDislikes().contains(user)) {
+                var postOwner = userRepository.findByContentContaining(post.getId());
+                dislikedPosts.add(new PostImageLinkDto(post.getPathsList().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
+            }
+        });
+
+        return dislikedPosts;
     }
 
     Post getPost(long postId) {
