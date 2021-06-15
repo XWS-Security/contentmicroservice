@@ -32,7 +32,6 @@ public class ReportController {
             reportService.createReport(createReportDto);
             return new ResponseEntity<>("Content reported successfully!", HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             return new ResponseEntity<>("Report didn't send!", HttpStatus.BAD_REQUEST);
         }
     }
