@@ -172,6 +172,24 @@ public class PostController {
         }
     }
 
+    @GetMapping("/likedPosts")
+    public ResponseEntity<List<PostImageLinkDto>> getLikedPosts() {
+        try {
+            return new ResponseEntity<>(postReactionService.getLikedPosts(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/dislikedPosts")
+    public ResponseEntity<List<PostImageLinkDto>> getDislikedPosts() {
+        try {
+            return new ResponseEntity<>(postReactionService.getDislikedPosts(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     private NistagramUser getCurrentlyLoggedUser() {
         var object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (NistagramUser.class.isInstance(object)) {
