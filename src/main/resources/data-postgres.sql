@@ -96,3 +96,11 @@ INSERT INTO public.user_content(user_id, content_id) VALUES (1, 3);
 INSERT INTO public.user_content(user_id, content_id) VALUES (1, 4);
 INSERT INTO public.user_content(user_id, content_id) VALUES (1, 5);
 INSERT INTO public.user_content(user_id, content_id) VALUES (1, 6);
+
+INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (2, 1);
+INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (1, 2);
+INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (3, 2);
+INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (4, 5);
+INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (5, 4);
+INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (1, 4);
+INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (6, 2);

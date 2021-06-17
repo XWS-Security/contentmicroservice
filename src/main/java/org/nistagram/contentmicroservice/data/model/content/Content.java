@@ -1,10 +1,10 @@
 package org.nistagram.contentmicroservice.data.model.content;
 
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import org.hibernate.annotations.SQLInsert;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.nistagram.contentmicroservice.data.dto.HomePageImageDto;
 import org.nistagram.contentmicroservice.data.model.Location;
 
 import javax.persistence.*;
@@ -13,6 +13,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+@SqlResultSetMapping(
+        name = "SubscribedContentMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = HomePageImageDto.class,
+                        columns = {
+                                @ColumnResult(name = "username", type = String.class),
+                                @ColumnResult(name = "profile_picture", type = String.class),
+                                @ColumnResult(name = "post_id", type = Long.class)
+                        }
+                )
+        }
+)
+@NamedNativeQuery(name = "Content.getSubscribedContent",
+        query = "SELECT nu.username AS username, nu.profile_picture AS profile_picture, con.id AS post_id \n" +
+                "FROM user_subscribed_user AS usu, nistagram_user AS nu, user_content AS uc, content AS con \n" +
+                "WHERE usu.subscribed_user_id = :id \n" +
+                "AND nu.id = usu.user_id AND uc.user_id = nu.id AND uc.content_id = con.id AND con.content_type = 'POST' \n" +
+                "ORDER BY con.date DESC;", resultSetMapping = "SubscribedContentMapping")
 @TypeDefs({
         @TypeDef(
                 name = "string-array",
@@ -66,7 +85,7 @@ public abstract class Content {
 
     public void setTagsList(List<String> tags) {
         String[] array = new String[tags.size()];
-        for (int i = 0; i<tags.size(); i++) {
+        for (int i = 0; i < tags.size(); i++) {
             array[i] = tags.get(i);
         }
         this.tags = array;
