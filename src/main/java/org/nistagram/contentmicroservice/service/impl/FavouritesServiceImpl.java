@@ -4,7 +4,7 @@ import org.nistagram.contentmicroservice.data.dto.PostImageLinkDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.logging.LoggerService;
@@ -21,12 +21,12 @@ import java.util.Optional;
 public class FavouritesServiceImpl implements IFavouritesService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
     private final LoggerService loggerService = new LoggerServiceImpl(this.getClass());
 
-    public FavouritesServiceImpl(PostRepository postRepository, UserRepository userRepository) {
+    public FavouritesServiceImpl(PostRepository postRepository, NistagramUserRepository nistagramUserRepository) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.nistagramUserRepository = nistagramUserRepository;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class FavouritesServiceImpl implements IFavouritesService {
         }
         var posts = new ArrayList<PostImageLinkDto>();
         postRepository.findAllFavourites(user.getId()).forEach(post -> {
-            var postOwner = userRepository.findByContentContaining(post.getId());
+            var postOwner = nistagramUserRepository.findByContentContaining(post.getId());
             posts.add(new PostImageLinkDto(post.getPathsList().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
         });
         return posts;
@@ -80,7 +80,7 @@ public class FavouritesServiceImpl implements IFavouritesService {
             loggerService.logPostSaveToFavouritesSuccess(postId);
         }
         user.setSavedContent(favourites);
-        userRepository.save(user);
+        nistagramUserRepository.save(user);
     }
 
     private NistagramUser getCurrentlyLoggedUser() {

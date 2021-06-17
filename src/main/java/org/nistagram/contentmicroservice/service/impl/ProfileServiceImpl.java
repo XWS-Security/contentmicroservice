@@ -5,7 +5,7 @@ import org.nistagram.contentmicroservice.data.dto.ProfileInfoDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.model.content.Story;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.service.IProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,14 +25,14 @@ import java.util.UUID;
 @Service
 public class ProfileServiceImpl implements IProfileService {
 
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
     @Autowired
-    public ProfileServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public ProfileServiceImpl(NistagramUserRepository nistagramUserRepository) {
+        this.nistagramUserRepository = nistagramUserRepository;
     }
 
     private List<ProfileImageDto> getPathsOfFirstImagesInPosts(NistagramUser user) {
@@ -47,7 +47,7 @@ public class ProfileServiceImpl implements IProfileService {
 
     @Override
     public ProfileInfoDto getUserInfo(String id) {
-        NistagramUser user = userRepository.findByUsername(id);
+        NistagramUser user = nistagramUserRepository.findByUsername(id);
 
         var hasStories = false;
         var stories = user.getStories();
@@ -70,6 +70,6 @@ public class ProfileServiceImpl implements IProfileService {
         Files.copy(file.getInputStream(), post_path.resolve(random));
 
         user.setProfilePictureName(random);
-        userRepository.save(user);
+        nistagramUserRepository.save(user);
     }
 }

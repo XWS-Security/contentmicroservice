@@ -3,7 +3,7 @@ package org.nistagram.contentmicroservice.service.impl;
 import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.data.enums.CloseFriends;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.exceptions.UserAlreadyAdded;
 import org.nistagram.contentmicroservice.exceptions.UserAlreadyRemoved;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
@@ -16,10 +16,10 @@ import java.util.List;
 @Service
 public class InteractionServiceImpl implements IInteractionService {
 
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
 
-    public InteractionServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public InteractionServiceImpl(NistagramUserRepository nistagramUserRepository) {
+        this.nistagramUserRepository = nistagramUserRepository;
     }
 
     @Override
@@ -29,7 +29,7 @@ public class InteractionServiceImpl implements IInteractionService {
             return CloseFriends.USER_UNSIGNED;
         if(loggedUser.getUsername().equals(userName))
             return CloseFriends.SAME_USER;
-        if(userRepository.getCloseFriends(loggedUser.getId()).contains(userRepository.findByUsername(userName))){
+        if(nistagramUserRepository.getCloseFriends(loggedUser.getId()).contains(nistagramUserRepository.findByUsername(userName))){
             return CloseFriends.CLOSE_FRIENDS;
         }
         return  CloseFriends.NOT_CLOSE;
@@ -40,14 +40,14 @@ public class InteractionServiceImpl implements IInteractionService {
         var loggedUser = getCurrentlyLoggedUser();
         if(loggedUser==null)
             throw new UserNotLogged();
-        var user = userRepository.findByUsername(username);
-        List<NistagramUser> closeFriends = userRepository.getCloseFriends(loggedUser.getId());
+        var user = nistagramUserRepository.findByUsername(username);
+        List<NistagramUser> closeFriends = nistagramUserRepository.getCloseFriends(loggedUser.getId());
         if(!closeFriends.contains(user)){
             throw new UserAlreadyRemoved(username);
         }
         closeFriends.remove(user);
         loggedUser.setCloseFriends(closeFriends);
-        userRepository.save(loggedUser);
+        nistagramUserRepository.save(loggedUser);
     }
 
     @Override
@@ -55,14 +55,14 @@ public class InteractionServiceImpl implements IInteractionService {
         var loggedUser = getCurrentlyLoggedUser();
         if(loggedUser==null)
             throw new UserNotLogged();
-        var user = userRepository.findByUsername(username);
-        List<NistagramUser> closeFriends = userRepository.getCloseFriends(loggedUser.getId());
+        var user = nistagramUserRepository.findByUsername(username);
+        List<NistagramUser> closeFriends = nistagramUserRepository.getCloseFriends(loggedUser.getId());
         if(closeFriends.contains(user)){
             throw new UserAlreadyAdded(username);
         }
         closeFriends.add(user);
         loggedUser.setCloseFriends(closeFriends);
-        userRepository.save(loggedUser);
+        nistagramUserRepository.save(loggedUser);
     }
 
     @Override

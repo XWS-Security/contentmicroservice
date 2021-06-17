@@ -9,7 +9,7 @@ import org.nistagram.contentmicroservice.data.model.content.Story;
 import org.nistagram.contentmicroservice.data.repository.ContentRepository;
 import org.nistagram.contentmicroservice.data.repository.LocationRepository;
 import org.nistagram.contentmicroservice.data.repository.StoryRepository;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.IStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Service
 public class StoryServiceImpl implements IStoryService {
 
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
     private final LocationRepository locationRepository;
     private static final long DAY_IN_MILLISECONDS = 86400000L;
     private final StoryRepository storyRepository;
@@ -39,8 +39,8 @@ public class StoryServiceImpl implements IStoryService {
     private String project_path;
 
     @Autowired
-    public StoryServiceImpl(UserRepository userRepository, LocationRepository locationRepository, StoryRepository storyRepository, ContentRepository contentRepository) {
-        this.userRepository = userRepository;
+    public StoryServiceImpl(NistagramUserRepository nistagramUserRepository, LocationRepository locationRepository, StoryRepository storyRepository, ContentRepository contentRepository) {
+        this.nistagramUserRepository = nistagramUserRepository;
         this.locationRepository = locationRepository;
         this.storyRepository = storyRepository;
         this.contentRepository = contentRepository;
@@ -77,7 +77,7 @@ public class StoryServiceImpl implements IStoryService {
     }
 
     private NistagramUser getUser(String username) {
-        return userRepository.findByUsername(username);
+        return nistagramUserRepository.findByUsername(username);
     }
 
     private List<StoryDto> makeDtos(List<Story> stories) {
@@ -116,7 +116,7 @@ public class StoryServiceImpl implements IStoryService {
         List<Content> userContent = contentRepository.findAllByUserId(user.getId());
         userContent.add(story);
         user.setContent(userContent);
-        userRepository.save(user);
+        nistagramUserRepository.save(user);
     }
 
     @Override

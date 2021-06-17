@@ -7,4 +7,6 @@ public interface UserService {
     void saveUser(NistagramUser user);
 
     void updateUser(EditUserDto editUserDto);
+
+    void removeUser(Long userId);
 }

@@ -18,4 +18,6 @@ public interface IPostService {
     void createPost(CreatePostDto postDto, List<MultipartFile> files) throws SSLException;
 
     List<LocationDto> getAllLocations();
+
+    void removePost(Long postId);
 }

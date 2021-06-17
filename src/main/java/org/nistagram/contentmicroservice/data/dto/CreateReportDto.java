@@ -1,9 +1,17 @@
 package org.nistagram.contentmicroservice.data.dto;
 
+import org.nistagram.contentmicroservice.util.Constants;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 public class CreateReportDto implements Serializable {
+
+    @Min(1L)
     private Long contentId;
+
+    @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE)
     private String reason;
 
     public CreateReportDto() {

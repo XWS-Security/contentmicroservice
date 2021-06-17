@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.service.impl;
 
 import org.nistagram.contentmicroservice.data.model.User;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
