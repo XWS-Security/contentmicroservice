@@ -9,7 +9,7 @@ import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.CommentRepository;
 import org.nistagram.contentmicroservice.data.repository.PostRepository;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.exceptions.AccessToUserProfileDeniedException;
 import org.nistagram.contentmicroservice.exceptions.PostDoesNotExistException;
 import org.nistagram.contentmicroservice.service.PostReactionService;
@@ -29,22 +29,22 @@ import java.util.Optional;
 @Service
 public class PostReactionServiceImpl implements PostReactionService {
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
     private final CommentRepository commentRepository;
 
     @Value("${FOLLOWER}")
     private String followerMicroserviceURI;
 
-    public PostReactionServiceImpl(PostRepository postRepository, UserRepository userRepository, CommentRepository commentRepository) {
+    public PostReactionServiceImpl(PostRepository postRepository, NistagramUserRepository nistagramUserRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.nistagramUserRepository = nistagramUserRepository;
         this.commentRepository = commentRepository;
     }
 
     @Override
     public void comment(UploadCommentDto dto, String token) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(dto.getPostId());
-        NistagramUser owner = userRepository.findByContentContaining(dto.getPostId());
+        NistagramUser owner = nistagramUserRepository.findByContentContaining(dto.getPostId());
         validateUser(owner, token);
 
         Comment comment = new Comment(dto.getText(), new Date(), getCurrentlyLoggedUser());
@@ -59,14 +59,14 @@ public class PostReactionServiceImpl implements PostReactionService {
     public void like(long postId, String token) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(postId);
         NistagramUser user = getCurrentlyLoggedUser();
-        NistagramUser owner = userRepository.findByContentContaining(postId);
+        NistagramUser owner = nistagramUserRepository.findByContentContaining(postId);
         validateUser(owner, token);
 
-        var dislikes = userRepository.findDislikesForPost(postId);
+        var dislikes = nistagramUserRepository.findDislikesForPost(postId);
         dislikes.remove(user);
         post.setDislikes(dislikes);
 
-        var likes = userRepository.findLikesForPost(postId);
+        var likes = nistagramUserRepository.findLikesForPost(postId);
         if (!likes.contains(user)) {
             likes.add(user);
             post.setLikes(likes);
@@ -79,14 +79,14 @@ public class PostReactionServiceImpl implements PostReactionService {
     public void dislike(long postId, String token) throws AccessToUserProfileDeniedException, SSLException {
         Post post = getPost(postId);
         NistagramUser user = getCurrentlyLoggedUser();
-        NistagramUser owner = userRepository.findByContentContaining(postId);
+        NistagramUser owner = nistagramUserRepository.findByContentContaining(postId);
         validateUser(owner, token);
 
-        var likes = userRepository.findLikesForPost(postId);
+        var likes = nistagramUserRepository.findLikesForPost(postId);
         likes.remove(user);
         post.setLikes(likes);
 
-        var dislikes = userRepository.findDislikesForPost(postId);
+        var dislikes = nistagramUserRepository.findDislikesForPost(postId);
         if (!dislikes.contains(user)) {
             dislikes.add(user);
             post.setDislikes(dislikes);
@@ -103,7 +103,7 @@ public class PostReactionServiceImpl implements PostReactionService {
 
         allPosts.forEach(post -> {
             if (post.getLikes().contains(user)) {
-                var postOwner = userRepository.findByContentContaining(post.getId());
+                var postOwner = nistagramUserRepository.findByContentContaining(post.getId());
                 likedPosts.add(new PostImageLinkDto(post.getPathsList().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
             }
         });
@@ -119,7 +119,7 @@ public class PostReactionServiceImpl implements PostReactionService {
 
         allPosts.forEach(post -> {
             if (post.getDislikes().contains(user)) {
-                var postOwner = userRepository.findByContentContaining(post.getId());
+                var postOwner = nistagramUserRepository.findByContentContaining(post.getId());
                 dislikedPosts.add(new PostImageLinkDto(post.getPathsList().get(0), post.getId(), postOwner.getUsername(), postOwner.getProfilePictureName()));
             }
         });

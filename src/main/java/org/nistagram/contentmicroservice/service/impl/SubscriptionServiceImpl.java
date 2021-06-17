@@ -2,7 +2,7 @@ package org.nistagram.contentmicroservice.service.impl;
 
 import org.nistagram.contentmicroservice.data.dto.SubscriptionDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.SubscriptionService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,32 +12,32 @@ import java.util.List;
 
 @Service
 public class SubscriptionServiceImpl implements SubscriptionService {
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
 
-    public SubscriptionServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public SubscriptionServiceImpl(NistagramUserRepository nistagramUserRepository) {
+        this.nistagramUserRepository = nistagramUserRepository;
     }
 
     @Override
     public void subscribe(SubscriptionDto dto) {
-        NistagramUser subscribedTo = userRepository.findByUsername(dto.getSubscribedTo());
-        NistagramUser subscribedFrom = userRepository.findByUsername(dto.getSubscribedFrom());
+        NistagramUser subscribedTo = nistagramUserRepository.findByUsername(dto.getSubscribedTo());
+        NistagramUser subscribedFrom = nistagramUserRepository.findByUsername(dto.getSubscribedFrom());
 
         List<NistagramUser> subscriptions = subscribedTo.getSubscribedUsers();
         if (!subscriptions.contains(subscribedFrom)) {
             subscriptions.add(subscribedFrom);
-            userRepository.save(subscribedTo);
+            nistagramUserRepository.save(subscribedTo);
         }
     }
 
     @Override
     public void unsubscribe(SubscriptionDto dto) {
-        NistagramUser subscribedTo = userRepository.findByUsername(dto.getSubscribedTo());
-        NistagramUser subscribedFrom = userRepository.findByUsername(dto.getSubscribedFrom());
+        NistagramUser subscribedTo = nistagramUserRepository.findByUsername(dto.getSubscribedTo());
+        NistagramUser subscribedFrom = nistagramUserRepository.findByUsername(dto.getSubscribedFrom());
 
         List<NistagramUser> subscriptions = subscribedTo.getSubscribedUsers();
         subscriptions.remove(subscribedFrom);
-        userRepository.save(subscribedTo);
+        nistagramUserRepository.save(subscribedTo);
     }
 
     private NistagramUser getCurrentlyLoggedUser() {

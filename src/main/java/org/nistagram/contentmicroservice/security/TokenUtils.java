@@ -25,6 +25,7 @@ public class TokenUtils {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         User user = (User) userDetails;
+        System.out.println(user.getAdministrationRole() + user.getUsername());
         final String username = getUsernameFromToken(token);
         final Date created = getIssuedAtDateFromToken(token);
         return (username != null && username.equals(userDetails.getUsername())) &&

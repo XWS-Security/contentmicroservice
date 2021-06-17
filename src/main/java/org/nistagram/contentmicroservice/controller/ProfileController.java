@@ -69,6 +69,17 @@ public class ProfileController {
         }
     }
 
+    @PutMapping(path = "/remove/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
+    public ResponseEntity<String> remove(@PathVariable Long id) {
+        try {
+            userService.removeUser(id);
+            return new ResponseEntity<>("User successfully removed!", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PutMapping("/updateUser")
     public ResponseEntity<String> updateUser(@RequestBody @Valid EditUserDto editUserDto) {
         try {

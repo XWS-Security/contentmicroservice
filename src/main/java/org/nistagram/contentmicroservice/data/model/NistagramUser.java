@@ -23,14 +23,14 @@ public class NistagramUser extends User {
             inverseJoinColumns = @JoinColumn(name = "subscribed_user_id", referencedColumnName = "id"))
     private List<NistagramUser> subscribedUsers;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.DETACH)
     @JoinTable(
             name = "user_saved",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "saved_id")})
     private List<Post> savedContent;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.DETACH)
     @JoinTable(
             name = "user_content",
             joinColumns = {@JoinColumn(name = "user_id")},

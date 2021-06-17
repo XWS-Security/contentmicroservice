@@ -4,7 +4,7 @@ import org.nistagram.contentmicroservice.data.dto.EditUserDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.Role;
 import org.nistagram.contentmicroservice.data.repository.RoleRepository;
-import org.nistagram.contentmicroservice.data.repository.UserRepository;
+import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.exceptions.UserDoesNotExistException;
 import org.nistagram.contentmicroservice.exceptions.UsernameAlreadyExistsException;
 import org.nistagram.contentmicroservice.service.UserService;
@@ -17,12 +17,12 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
     private final RoleRepository roleRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
-        this.userRepository = userRepository;
+    public UserServiceImpl(NistagramUserRepository nistagramUserRepository, RoleRepository roleRepository) {
+        this.nistagramUserRepository = nistagramUserRepository;
         this.roleRepository = roleRepository;
     }
 
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
         if (isUsernameAvailable(user.getUsername())) {
             List<Role> roles = roleRepository.findByName(user.getAdministrationRole());
             user.setRoles(roles);
-            userRepository.save(user);
+            nistagramUserRepository.save(user);
         } else {
             throw new UsernameAlreadyExistsException();
         }
@@ -49,11 +49,16 @@ public class UserServiceImpl implements UserService {
         loadedUser.setProfilePrivate(editUserDto.isProfilePrivate());
         loadedUser.setUsername(editUserDto.getUsername());
         loadedUser.setAbout(editUserDto.getAbout());
-        userRepository.save(loadedUser);
+        nistagramUserRepository.save(loadedUser);
+    }
+
+    @Override
+    public void removeUser(Long userId) {
+        nistagramUserRepository.deleteById(userId);
     }
 
     private boolean isUsernameAvailable(String username) {
-        NistagramUser user = userRepository.findByUsername(username);
+        NistagramUser user = nistagramUserRepository.findByUsername(username);
         return user == null;
     }
 

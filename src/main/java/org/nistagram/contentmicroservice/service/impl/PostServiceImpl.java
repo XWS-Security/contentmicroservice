@@ -7,6 +7,7 @@ import org.nistagram.contentmicroservice.data.dto.PostDto;
 import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
 import org.nistagram.contentmicroservice.data.model.Location;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.Report;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.*;
@@ -30,20 +31,22 @@ public class PostServiceImpl implements IPostService {
 
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final NistagramUserRepository nistagramUserRepository;
     private final LocationRepository locationRepository;
     private final ContentRepository contentRepository;
+    private final ReportRepository reportRepository;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, UserRepository userRepository, ContentRepository contentRepository) {
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, NistagramUserRepository nistagramUserRepository, ContentRepository contentRepository, ReportRepository reportRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.locationRepository = locationRepository;
-        this.userRepository = userRepository;
+        this.nistagramUserRepository = nistagramUserRepository;
         this.contentRepository = contentRepository;
+        this.reportRepository = reportRepository;
     }
 
     @Override
@@ -90,7 +93,7 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public PostsUserDto getPostsUser(Long id) {
-        var user = userRepository.findByContentContaining(id);
+        var user = nistagramUserRepository.findByContentContaining(id);
         return new PostsUserDto(user.getUsername(), user.getProfilePictureName());
     }
 
@@ -123,7 +126,7 @@ public class PostServiceImpl implements IPostService {
         List<Content> userContent = contentRepository.findAllByUserId(user.getId());
         userContent.add(post);
         user.setContent(userContent);
-        userRepository.save(user);
+        nistagramUserRepository.save(user);
     }
 
     @Override
@@ -136,6 +139,12 @@ public class PostServiceImpl implements IPostService {
         });
 
         return locationDtos;
+    }
+
+    @Override
+    public void removePost(Long postId) {
+ //       reportRepository.deleteReportsByContent(postId);
+        postRepository.deleteById(postId);
     }
 
     Post getPost(long postId) {

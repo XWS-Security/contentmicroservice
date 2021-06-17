@@ -10,6 +10,7 @@ import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.security.TokenUtils;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.nistagram.contentmicroservice.service.PostReactionService;
+import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController
@@ -169,6 +171,18 @@ public class PostController {
         } catch (Exception e) {
             loggerService.logDislikeFailed(dto.getPostId(), e.getMessage());
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(path = "/remove/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRATOR_ROLE')")
+    public ResponseEntity<String> remove(@PathVariable @Min(1L) Long id) {
+        try {
+            postService.removePost(id);
+            return new ResponseEntity<>("Post successfully removed!", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
         }
     }
 
