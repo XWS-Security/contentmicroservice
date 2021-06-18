@@ -109,6 +109,7 @@ public class StoryServiceImpl implements IStoryService {
         story.setOnlyCloseFriends(storyDto.isCloseFriends());
         story.setLocation(locationRepository.findByName(storyDto.getLocation()));
         story.setHighlights(storyDto.isHighlights());
+        storyRepository.save(story);
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Content> userContent = contentRepository.findAllByUserId(user.getId());
@@ -125,6 +126,11 @@ public class StoryServiceImpl implements IStoryService {
         }
         List<Story> userStories = storyRepository.findAllByUserId(user.getId());
         return makeDtos(userStories);
+    }
+
+    @Override
+    public void removeStory(Long storyId) {
+        storyRepository.deleteById(storyId);
     }
 
     private boolean passed24Hours(Date date) {

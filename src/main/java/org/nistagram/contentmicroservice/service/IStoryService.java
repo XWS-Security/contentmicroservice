@@ -15,4 +15,6 @@ public interface IStoryService {
     List<StoryDto> getHighlights(String username);
 
     List<StoryDto> getLoggedUsersStories();
+
+    public void removeStory(Long storyId);
 }
