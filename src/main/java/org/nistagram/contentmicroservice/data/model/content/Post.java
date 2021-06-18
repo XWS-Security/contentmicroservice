@@ -34,10 +34,8 @@ public class Post extends Content {
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<NistagramUser> dislikes;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "post_comment",
-            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "comment_id", referencedColumnName = "id"))
+    @OneToMany(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "post_id")
     private List<Comment> comments;
 
     @Type(type = "string-array")

@@ -8,13 +8,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PostRepository extends CrudRepository<Post, Long> {
-    @Query(value = "SELECT c.id, c.tags, c.date, c.location_id, c.paths, c.about, c.content_type, c.deleted " +
-            " FROM content AS c, user_content AS uc" +
-            " WHERE c.content_type = 'POST' AND uc.user_id = :id AND c.id = uc.content_id AND c.deleted = false", nativeQuery = true)
-    List<Post> findAllByUserId (@Param("id") Long id);
+    @Query(value = "SELECT * FROM content WHERE content_type = 'POST' AND user_id = :id", nativeQuery = true)
+    List<Post> findAllByUserId(@Param("id") Long id);
 
     @Query(value = "SELECT c.id, c.tags, c.date, c.location_id, c.paths, c.about, c.content_type, c.deleted " +
-    " FROM content AS c, user_saved AS us" +
-    " WHERE us.user_id = :id AND us.saved_id = c.id AND c.deleted = false", nativeQuery = true)
+            " FROM content AS c, user_saved AS us" +
+            " WHERE us.user_id = :id AND us.saved_id = c.id AND c.deleted = false", nativeQuery = true)
     List<Post> findAllFavourites(@Param("id") Long id);
 }
