@@ -9,10 +9,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ContentRepository extends CrudRepository<Content, Long> {
-    @Query(value = "SELECT c.content_type, c.id, c.date, c.tags, c.about, c.paths, c.highlights, c.only_close_friends, c.path, c.location_id, c.deleted " +
-            " FROM content AS c, user_content AS uc" +
-            " WHERE uc.user_id = :id AND c.id = uc.content_id AND c.deleted = false", nativeQuery = true)
-    List<Content> findAllByUserId (@Param("id") Long id);
+    @Query(value = "SELECT * FROM content WHERE user_id = :id", nativeQuery = true)
+    List<Content> findAllByUserId(@Param("id") Long id);
 
     @Query(nativeQuery = true)
     List<HomePageImageDto> getSubscribedContent(@Param("id") Long id);

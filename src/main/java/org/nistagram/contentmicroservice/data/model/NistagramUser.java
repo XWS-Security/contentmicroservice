@@ -1,7 +1,5 @@
 package org.nistagram.contentmicroservice.data.model;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.model.content.Story;
