@@ -31,9 +31,9 @@ import java.util.Objects;
 )
 @NamedNativeQuery(name = "Content.getSubscribedContent",
         query = "SELECT nu.username AS username, nu.profile_picture AS profile_picture, con.id AS post_id \n" +
-                "FROM user_subscribed_user AS usu, nistagram_user AS nu, user_content AS uc, content AS con \n" +
+                "FROM user_subscribed_user AS usu, nistagram_user AS nu, content AS con \n" +
                 "WHERE usu.subscribed_user_id = :id \n" +
-                "AND nu.id = usu.user_id AND uc.user_id = nu.id AND uc.content_id = con.id AND con.content_type = 'POST' \n" +
+                "AND nu.id = usu.user_id AND con.user_id = nu.id AND con.content_type = 'POST' \n" +
                 "ORDER BY con.date DESC;", resultSetMapping = "SubscribedContentMapping")
 @TypeDefs({
         @TypeDef(
