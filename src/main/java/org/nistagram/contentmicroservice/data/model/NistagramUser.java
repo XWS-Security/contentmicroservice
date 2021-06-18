@@ -43,6 +43,9 @@ public class NistagramUser extends User {
     @Column(name = "private_profile")
     private Boolean profilePrivate;
 
+    @Column(name = "tags_enabled")
+    private boolean tagsEnabled = false;
+
     public List<Post> getPosts() {
         var posts = (List<Post>) (List<?>) getContent()
                 .stream().filter(p -> p.getClass().equals(Post.class)).collect(Collectors.toList());
@@ -116,5 +119,13 @@ public class NistagramUser extends User {
 
     public void setProfilePrivate(Boolean profilePrivate) {
         this.profilePrivate = profilePrivate;
+    }
+
+    public boolean isTagsEnabled() {
+        return tagsEnabled;
+    }
+
+    public void setTagsEnabled(boolean tagsEnabled) {
+        this.tagsEnabled = tagsEnabled;
     }
 }

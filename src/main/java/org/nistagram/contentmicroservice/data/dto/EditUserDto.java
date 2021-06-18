@@ -18,6 +18,7 @@ public class EditUserDto implements Serializable {
     private String about;
 
     private boolean profilePrivate = false;
+    private boolean tagsEnabled = false;
 
     public EditUserDto() {
     }
@@ -52,5 +53,13 @@ public class EditUserDto implements Serializable {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public boolean isTagsEnabled() {
+        return tagsEnabled;
+    }
+
+    public void setTagsEnabled(boolean tagsEnabled) {
+        this.tagsEnabled = tagsEnabled;
     }
 }
