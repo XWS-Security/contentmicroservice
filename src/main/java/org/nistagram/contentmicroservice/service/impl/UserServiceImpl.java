@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
         loadedUser.setProfilePrivate(editUserDto.isProfilePrivate());
         loadedUser.setUsername(editUserDto.getUsername());
         loadedUser.setAbout(editUserDto.getAbout());
+        loadedUser.setTagsEnabled(editUserDto.isTagsEnabled());
         nistagramUserRepository.save(loadedUser);
     }
 
