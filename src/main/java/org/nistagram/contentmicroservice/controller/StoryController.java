@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import java.io.IOException;
 import java.util.List;
@@ -101,6 +102,18 @@ public class StoryController {
         } catch (Exception e) {
             loggerService.getStoriesFailed(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping(path = "/remove/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRATOR_ROLE')")
+    public ResponseEntity<String> remove(@PathVariable @Min(1L) Long id) {
+        try {
+            storyService.removeStory(id);
+            return new ResponseEntity<>("Story successfully removed!", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Something went wrong!", HttpStatus.BAD_REQUEST);
         }
     }
 
