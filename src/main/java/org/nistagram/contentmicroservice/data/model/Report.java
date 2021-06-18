@@ -1,5 +1,6 @@
 package org.nistagram.contentmicroservice.data.model;
 
+import org.nistagram.contentmicroservice.data.enums.ReportType;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 
 import javax.persistence.*;
@@ -24,13 +25,17 @@ public class Report {
     @JoinColumn(name = "user_id")
     private NistagramUser user;
 
+    @Column(name = "type")
+    private ReportType reportType;
+
     public Report() {
     }
 
-    public Report(String reason, Content content, NistagramUser user) {
+    public Report(String reason, Content content, NistagramUser user, ReportType reportType) {
         this.reason = reason;
         this.content = content;
         this.user = user;
+        this.reportType = reportType;
     }
 
     public Long getId() {
@@ -63,5 +68,13 @@ public class Report {
 
     public void setUser(NistagramUser user) {
         this.user = user;
+    }
+
+    public ReportType getReportType() {
+        return reportType;
+    }
+
+    public void setReportType(ReportType reportType) {
+        this.reportType = reportType;
     }
 }

@@ -100,7 +100,6 @@ public class PostServiceImpl implements IPostService {
     @Override
     public void createPost(CreatePostDto postDto, List<MultipartFile> files) {
         Post post = new Post();
-        long postId = ThreadLocalRandom.current().nextLong(100000);
         List<String> paths = new ArrayList<>();
         Path post_path = Paths.get(project_path);
 
@@ -119,7 +118,6 @@ public class PostServiceImpl implements IPostService {
         post.setTagsList(postDto.getTags());
         post.setAbout(postDto.getAbout());
         post.setDate(Calendar.getInstance().getTime());
-        post.setId(postId);
         post.setLocation(locationRepository.findByName(postDto.getLocation()));
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
