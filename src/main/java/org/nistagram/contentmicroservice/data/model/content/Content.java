@@ -8,6 +8,9 @@ import org.nistagram.contentmicroservice.data.dto.HomePageImageDto;
 import org.nistagram.contentmicroservice.data.model.Location;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;

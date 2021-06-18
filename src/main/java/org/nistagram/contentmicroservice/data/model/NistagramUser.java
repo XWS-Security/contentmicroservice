@@ -1,5 +1,7 @@
 package org.nistagram.contentmicroservice.data.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.model.content.Story;
@@ -30,11 +32,8 @@ public class NistagramUser extends User {
             inverseJoinColumns = {@JoinColumn(name = "saved_id")})
     private List<Post> savedContent;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_content",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "content_id")})
+    @OneToMany(cascade = CascadeType.DETACH)
+    @JoinColumn(name = "user_id")
     private List<Content> content;
 
     @Column(name = "profile_picture")

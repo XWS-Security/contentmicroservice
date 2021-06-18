@@ -10,8 +10,8 @@ public interface NistagramUserRepository extends CrudRepository<NistagramUser, L
     NistagramUser findByUsername(String username);
 
     @Query(value = "SELECT DISTINCT u.id, u.user_type, u.username, u.enabled, u.last_password_reset_date, u.profile_picture," +
-            " u.about, u.private_profile FROM nistagram_user AS u, content AS c, user_content AS uc" +
-            " WHERE u.user_type = 'INSTAGRAM_USER' AND u.id = uc.user_id AND c.id = uc.content_id AND c.id = :id", nativeQuery = true)
+            " u.about, u.private_profile FROM nistagram_user AS u, content AS c" +
+            " WHERE u.user_type = 'INSTAGRAM_USER' AND u.id = c.user_id AND c.id = :id", nativeQuery = true)
     NistagramUser findByContentContaining(Long id);
 
     @Query(value = "SELECT DISTINCT u.id, u.user_type, u.username, u.enabled, u.last_password_reset_date, u.profile_picture," +
