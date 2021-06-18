@@ -96,8 +96,6 @@ public class StoryServiceImpl implements IStoryService {
     @Override
     public void createStory(CreateStoryDto storyDto, List<MultipartFile> files) throws IOException {
         Story story = new Story();
-        long storyId = ThreadLocalRandom.current().nextLong(100000);
-        story.setId(storyId);
 
         Path story_path = Paths.get(project_path);
         MultipartFile file = files.get(0);
