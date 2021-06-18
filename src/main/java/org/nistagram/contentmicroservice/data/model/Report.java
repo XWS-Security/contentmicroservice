@@ -1,5 +1,7 @@
 package org.nistagram.contentmicroservice.data.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.nistagram.contentmicroservice.data.enums.ReportType;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 
@@ -19,6 +21,7 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "content_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Content content;
 
     @ManyToOne

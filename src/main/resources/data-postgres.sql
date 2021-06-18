@@ -60,28 +60,28 @@ INSERT INTO public.location(
     VALUES (3, 'Bife Jelena');
 
 INSERT INTO public.content(
-    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id)
-    VALUES ('POST', '1', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image1.jpg, image2.jpg, image3.jpg}', null, null, null, 1);
+    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id, deleted, user_id)
+    VALUES ('POST', '1', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image1.jpg, image2.jpg, image3.jpg}', null, null, null, 1, 1);
 
 INSERT INTO public.content(
-    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id)
-    VALUES ('POST', '2', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image4.jpg, image5.jpg}', null, null, null, 1);
+    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id, deleted, user_id)
+    VALUES ('POST', '2', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image4.jpg, image5.jpg}', null, null, null, 1, 1);
 
 INSERT INTO public.content(
-    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id)
-    VALUES ('POST', '3', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{video1.mp4, image6.jpg}', null, null, null, 1);
+    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id, deleted, user_id)
+    VALUES ('POST', '3', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{video1.mp4, image6.jpg}', null, null, null, 1, 1);
 
 INSERT INTO public.content(
-    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id)
-    VALUES ('POST', '4', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{video2.mp4, image7.jpg}', null, null, null, 1);
+    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id, deleted, user_id)
+    VALUES ('POST', '4', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{video2.mp4, image7.jpg}', null, null, null, 1, 1);
 
 INSERT INTO public.content(
-    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id)
-    VALUES ('POST', '5', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image8.jpg, image9.jpg}', null, null, null, 1);
+    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id, deleted, user_id)
+    VALUES ('POST', '5', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image8.jpg, image9.jpg}', null, null, null, 1, 1);
 
 INSERT INTO public.content(
-    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id)
-    VALUES ('POST', '6', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image10.jpg}', null, null, null, 1);
+    content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id, deleted, user_id)
+    VALUES ('POST', '6', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image10.jpg}', null, null, null, 1, 1);
 
 INSERT INTO public.comment(id, date, text, user_id) VALUES ('1', '2017-10-01 21:58:58.508-07', 'Lepasi', '2');
 INSERT INTO public.comment(id, date, text, user_id) VALUES ('2', '2017-10-01 21:58:58.508-07', 'Lepasi', '3');
@@ -95,12 +95,12 @@ INSERT INTO public.post_comment(post_id, comment_id) VALUES (1, 3);
 INSERT INTO public.post_comment(post_id, comment_id) VALUES (1, 4);
 INSERT INTO public.post_comment(post_id, comment_id) VALUES (1, 5);
 
-INSERT INTO public.user_content(user_id, content_id) VALUES (1, 1);
-INSERT INTO public.user_content(user_id, content_id) VALUES (1, 2);
-INSERT INTO public.user_content(user_id, content_id) VALUES (1, 3);
-INSERT INTO public.user_content(user_id, content_id) VALUES (1, 4);
-INSERT INTO public.user_content(user_id, content_id) VALUES (1, 5);
-INSERT INTO public.user_content(user_id, content_id) VALUES (1, 6);
+-- INSERT INTO public.user_content(user_id, content_id) VALUES (1, 1);
+-- INSERT INTO public.user_content(user_id, content_id) VALUES (1, 2);
+-- INSERT INTO public.user_content(user_id, content_id) VALUES (1, 3);
+-- INSERT INTO public.user_content(user_id, content_id) VALUES (1, 4);
+-- INSERT INTO public.user_content(user_id, content_id) VALUES (1, 5);
+-- INSERT INTO public.user_content(user_id, content_id) VALUES (1, 6);
 
 INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (2, 1);
 INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (1, 2);

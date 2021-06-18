@@ -119,6 +119,7 @@ public class PostServiceImpl implements IPostService {
         post.setAbout(postDto.getAbout());
         post.setDate(Calendar.getInstance().getTime());
         post.setLocation(locationRepository.findByName(postDto.getLocation()));
+        postRepository.save(post);
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Content> userContent = contentRepository.findAllByUserId(user.getId());
@@ -141,7 +142,6 @@ public class PostServiceImpl implements IPostService {
 
     @Override
     public void removePost(Long postId) {
- //       reportRepository.deleteReportsByContent(postId);
         postRepository.deleteById(postId);
     }
 

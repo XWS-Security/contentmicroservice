@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ReportRepository extends CrudRepository<Report, Long> {
 
-    @Modifying
-    @Query(value = "DELETE FROM report WHERE content_id = :id", nativeQuery = true)
-    void deleteReportsByContent(@Param("id") Long id);
+//    @Modifying
+//    @Query(value = "DELETE FROM report WHERE content_id = :id", nativeQuery = true)
+//    void deleteReportsByContent(@Param("id") Long id);
 }
