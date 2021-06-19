@@ -6,6 +6,7 @@ import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.model.content.Story;
 import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
+import org.nistagram.contentmicroservice.service.IImageService;
 import org.nistagram.contentmicroservice.service.IProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,25 +15,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 @Service
 public class ProfileServiceImpl implements IProfileService {
 
     private final NistagramUserRepository nistagramUserRepository;
+    private final IImageService imageService;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
     @Autowired
-    public ProfileServiceImpl(NistagramUserRepository nistagramUserRepository) {
+    public ProfileServiceImpl(NistagramUserRepository nistagramUserRepository, IImageService imageService) {
         this.nistagramUserRepository = nistagramUserRepository;
+        this.imageService = imageService;
     }
 
     private List<ProfileImageDto> getPathsOfFirstImagesInPosts(NistagramUser user) {
@@ -63,13 +61,8 @@ public class ProfileServiceImpl implements IProfileService {
     public void setProfilePicture(List<MultipartFile> files) throws IOException {
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        MultipartFile file = files.get(0);
-        Path post_path = Paths.get(project_path);
-        String extension = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
-        String random = UUID.randomUUID().toString() + "." + extension;
-        Files.copy(file.getInputStream(), post_path.resolve(random));
-
-        user.setProfilePictureName(random);
+        var imageName = imageService.saveOne(files);
+        user.setProfilePictureName(imageName);
         nistagramUserRepository.save(user);
     }
 }

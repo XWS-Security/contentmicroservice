@@ -11,12 +11,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.constraints.Pattern;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/image", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -48,13 +52,17 @@ public class ImageController {
                     .contentLength(media.getFile().length())
                     .contentType(type)
                     .body(media.getStream());
-        } catch (BadFileTypeException e) {
-            loggerService.logGetImageFailed(name, e.getMessage());
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             loggerService.logGetImageFailed(name, e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PreAuthorize("hasAuthority('NISTAGRAM_USER_ROLE')")
+    @PostMapping(path = "/save", consumes = {"multipart/form-data"}, produces = {"text/json"})
+    public ResponseEntity<String> save(@RequestPart("photos") List<MultipartFile> files) throws IOException {
+        var imageName = imageService.saveOne(files);
+        return ResponseEntity.ok(imageName);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
