@@ -12,8 +12,9 @@ public class PostDto implements Serializable {
     private int dislikes;
     private List<Long> commentIds;
     private String about;
+    private List<String> taggedUsers;
 
-    public PostDto(LocationDto location, List<String> tags, Date date, int likes, int dislikes, List<Long> commentIds, String about) {
+    public PostDto(LocationDto location, List<String> tags, Date date, int likes, int dislikes, List<Long> commentIds, String about, List<String> taggedUsers) {
         this.location = location;
         this.tags = tags;
         this.date = date;
@@ -21,6 +22,7 @@ public class PostDto implements Serializable {
         this.dislikes = dislikes;
         this.commentIds = commentIds;
         this.about = about;
+        this.taggedUsers = taggedUsers;
     }
 
     public PostDto() {
@@ -80,5 +82,13 @@ public class PostDto implements Serializable {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public List<String> getTaggedUsers() {
+        return taggedUsers;
+    }
+
+    public void setTaggedUsers(List<String> taggedUsers) {
+        this.taggedUsers = taggedUsers;
     }
 }
