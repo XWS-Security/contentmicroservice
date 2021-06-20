@@ -11,16 +11,18 @@ public class StoryDto implements Serializable {
     private LocationDto location;
     private List<String> tags;
     private Date date;
+    private List<String> taggedUsers;
 
     public StoryDto() {
     }
 
-    public StoryDto(Long id, String path, LocationDto location, List<String> tags, Date date) {
+    public StoryDto(Long id, String path, LocationDto location, List<String> tags, Date date, List<String> taggedUsers) {
         this.id = id;
         this.path = path;
         this.location = location;
         this.tags = tags;
         this.date = date;
+        this.taggedUsers = taggedUsers;
     }
 
     public Long getId() {
@@ -61,5 +63,13 @@ public class StoryDto implements Serializable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public List<String> getTaggedUsers() {
+        return taggedUsers;
+    }
+
+    public void setTaggedUsers(List<String> taggedUsers) {
+        this.taggedUsers = taggedUsers;
     }
 }

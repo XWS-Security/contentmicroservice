@@ -86,9 +86,8 @@ public class StoryServiceImpl implements IStoryService {
             var location = story.getLocation();
             var locationDto = (location == null) ? null :
                     new LocationDto(location.getId(), location.getName());
-            dtos.add(new StoryDto(story.getId(), story.getPath(),
-                    locationDto,
-                    story.getTagsList(), story.getDate()));
+            var taggedUsers = story.getTaggedUsers().stream().map(NistagramUser::getUsername).collect(Collectors.toList());
+            dtos.add(new StoryDto(story.getId(), story.getPath(), locationDto, story.getTagsList(), story.getDate(), taggedUsers));
         });
         return dtos;
     }

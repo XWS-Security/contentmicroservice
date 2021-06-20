@@ -30,7 +30,7 @@ INSERT INTO public.nistagram_user(
 INSERT INTO public.nistagram_user(
 	user_type, id, enabled, last_password_reset_date, username, about, profile_picture, private_profile, tags_enabled)
 	VALUES ('INSTAGRAM_USER', '6', true, '2017-10-01 21:58:58.508-07', 'kobra',
-	'Lorem Ipsum', 'Profile3.jpg', true, true);
+	'Lorem Ipsum', 'Profile3.jpg', true, false);
 
 INSERT INTO public.nistagram_user(
 	user_type, id, enabled, last_password_reset_date, username)

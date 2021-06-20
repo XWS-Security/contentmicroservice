@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -66,7 +67,8 @@ public class ReportServiceImpl implements ReportService {
                 Story story = (Story) report.getContent();
                 var location = story.getLocation();
                 var locationDto = (location == null) ? null : new LocationDto(location.getId(), location.getName());
-                reportDtos.add(new StoryDto(story.getId(), story.getPath(), locationDto, story.getTagsList(), story.getDate()));
+                var taggedUsers = story.getTaggedUsers().stream().map(NistagramUser::getUsername).collect(Collectors.toList());
+                reportDtos.add(new StoryDto(story.getId(), story.getPath(), locationDto, story.getTagsList(), story.getDate(), taggedUsers));
             }
         });
         return reportDtos;

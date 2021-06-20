@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements IPostService {
@@ -71,7 +72,8 @@ public class PostServiceImpl implements IPostService {
         var about = post.getAbout();
         List<Long> commentIds = new ArrayList<>();
         comments.forEach(comment -> commentIds.add(comment.getId()));
-        return new PostDto(location, tags, date, likes, dislikes, commentIds, about);
+        var taggedUsers = post.getTaggedUsers().stream().map(NistagramUser::getUsername).collect(Collectors.toList());
+        return new PostDto(location, tags, date, likes, dislikes, commentIds, about, taggedUsers);
 
     }
 
