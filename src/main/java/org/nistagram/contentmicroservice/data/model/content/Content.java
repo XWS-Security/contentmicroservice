@@ -6,6 +6,7 @@ import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
 import org.nistagram.contentmicroservice.data.dto.HomePageImageDto;
 import org.nistagram.contentmicroservice.data.model.Location;
+import org.nistagram.contentmicroservice.data.model.NistagramUser;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
@@ -66,6 +67,12 @@ public abstract class Content {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "content_tagged_user",
+            joinColumns = @JoinColumn(name = "content_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    private List<NistagramUser> taggedUsers;
+
     public Long getId() {
         return id;
     }
@@ -108,6 +115,14 @@ public abstract class Content {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public List<NistagramUser> getTaggedUsers() {
+        return taggedUsers;
+    }
+
+    public void setTaggedUsers(List<NistagramUser> taggedUsers) {
+        this.taggedUsers = taggedUsers;
     }
 
     @Override

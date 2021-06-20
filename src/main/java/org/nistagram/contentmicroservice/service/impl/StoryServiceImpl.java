@@ -109,6 +109,14 @@ public class StoryServiceImpl implements IStoryService {
         story.setOnlyCloseFriends(storyDto.isCloseFriends());
         story.setLocation(locationRepository.findByName(storyDto.getLocation()));
         story.setHighlights(storyDto.isHighlights());
+        List<NistagramUser> taggedUsers = new ArrayList<>();
+        for (String username : storyDto.getTaggedUsers()) {
+            NistagramUser taggedUser = nistagramUserRepository.findByUsername(username);
+            if (taggedUser.isTagsEnabled() && !taggedUsers.contains(taggedUser)) {
+                taggedUsers.add(taggedUser);
+            }
+        }
+        story.setTaggedUsers(taggedUsers);
         storyRepository.save(story);
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -121,7 +129,7 @@ public class StoryServiceImpl implements IStoryService {
     @Override
     public List<StoryDto> getLoggedUsersStories() {
         NistagramUser user = getCurrentlyLoggedUser();
-        if(user==null){
+        if (user == null) {
             throw new UserNotLogged();
         }
         List<Story> userStories = storyRepository.findAllByUserId(user.getId());

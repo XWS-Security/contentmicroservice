@@ -119,6 +119,16 @@ public class PostServiceImpl implements IPostService {
         post.setAbout(postDto.getAbout());
         post.setDate(Calendar.getInstance().getTime());
         post.setLocation(locationRepository.findByName(postDto.getLocation()));
+
+        List<NistagramUser> taggedUsers = new ArrayList<>();
+        for (String username : postDto.getTaggedUsers()) {
+            NistagramUser taggedUser = nistagramUserRepository.findByUsername(username);
+            if (taggedUser.isTagsEnabled() && !taggedUsers.contains(taggedUser)) {
+                taggedUsers.add(taggedUser);
+            }
+        }
+        post.setTaggedUsers(taggedUsers);
+
         postRepository.save(post);
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
