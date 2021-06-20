@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.data.dto;
 
-import org.nistagram.contentmicroservice.security.customvalidators.TagsValidator;
+import org.nistagram.contentmicroservice.security.customvalidators.TaggedUserConstraint;
+import org.nistagram.contentmicroservice.security.customvalidators.TagsConstraint;
 import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,7 +13,7 @@ public class CreatePostDto {
 
     private List<MultipartFile> files;
 
-    @TagsValidator
+    @TagsConstraint
     private List<String> tags;
 
     private Date date;
@@ -22,6 +23,9 @@ public class CreatePostDto {
 
     @Pattern(regexp = Constants.PLAIN_TEXT_PATTERN, message = Constants.INVALID_CHARACTER_MESSAGE)
     private String location;
+
+    @TaggedUserConstraint
+    private List<String> taggedUsers;
 
     public CreatePostDto() {
 
@@ -73,5 +77,13 @@ public class CreatePostDto {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public List<String> getTaggedUsers() {
+        return taggedUsers;
+    }
+
+    public void setTaggedUsers(List<String> taggedUsers) {
+        this.taggedUsers = taggedUsers;
     }
 }

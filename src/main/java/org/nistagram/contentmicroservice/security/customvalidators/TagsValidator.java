@@ -1,14 +1,17 @@
 package org.nistagram.contentmicroservice.security.customvalidators;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import java.util.List;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ValidTags.class)
-public @interface TagsValidator {
-    String message() default "Greater or less signs are not allowed!";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+public class TagsValidator implements ConstraintValidator<TagsConstraint, List<String>> {
+    @Override
+    public boolean isValid(List<String> tags, ConstraintValidatorContext constraintValidatorContext) {
+        for (String tag : tags) {
+            if (tag.contains("<") || tag.contains(">")) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
