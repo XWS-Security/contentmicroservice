@@ -59,7 +59,7 @@ public class StoryController {
             loggerService.logUploadStory(username);
             storyService.createStory(dto, files);
             loggerService.logUploadStorySuccess(username);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Story successfully uploaded!", HttpStatus.OK);
         } catch (UserNotLogged e) {
             loggerService.logUploadStoryFailed(e.getMessage());
             loggerService.logTokenException("User not logged in.");

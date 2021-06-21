@@ -98,7 +98,7 @@ public class PostController {
             loggerService.logUploadPost(username);
             postService.createPost(dto, files);
             loggerService.logUploadPostSuccess(username);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("Post successfully uploaded!", HttpStatus.OK);
         } catch (UserNotLogged e) {
             loggerService.logTokenException(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
