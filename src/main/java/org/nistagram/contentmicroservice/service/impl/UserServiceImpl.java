@@ -3,8 +3,8 @@ package org.nistagram.contentmicroservice.service.impl;
 import org.nistagram.contentmicroservice.data.dto.EditUserDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.Role;
-import org.nistagram.contentmicroservice.data.repository.RoleRepository;
 import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
+import org.nistagram.contentmicroservice.data.repository.RoleRepository;
 import org.nistagram.contentmicroservice.exceptions.UserDoesNotExistException;
 import org.nistagram.contentmicroservice.exceptions.UsernameAlreadyExistsException;
 import org.nistagram.contentmicroservice.service.UserService;
@@ -56,6 +56,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void removeUser(Long userId) {
         nistagramUserRepository.deleteById(userId);
+    }
+
+    @Override
+    public void deleteUser(NistagramUser user) {
+        NistagramUser loadedUser = nistagramUserRepository.findByUsername(user.getUsername());
+        nistagramUserRepository.delete(loadedUser);
     }
 
     private boolean isUsernameAvailable(String username) {
