@@ -92,4 +92,10 @@ public interface LoggerService {
     void getStoriesSuccess(String username);
 
     void getStoriesFailed(String reason);
+
+    void logCreateUserReverted(String username);
+
+    void logCreateUserRevertedSuccess(String username);
+
+    void logCreateUserRevertedFail(String username, String message);
 }

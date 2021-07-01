@@ -9,4 +9,6 @@ public interface UserService {
     void updateUser(EditUserDto editUserDto);
 
     void removeUser(Long userId);
+
+    void deleteUser(NistagramUser user);
 }

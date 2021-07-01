@@ -3,6 +3,7 @@ package org.nistagram.contentmicroservice.controller;
 import org.modelmapper.ModelMapper;
 import org.nistagram.contentmicroservice.data.dto.EditUserDto;
 import org.nistagram.contentmicroservice.data.dto.ProfileInfoDto;
+import org.nistagram.contentmicroservice.data.dto.ResponseDto;
 import org.nistagram.contentmicroservice.data.dto.UserDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.exceptions.UserDoesNotExistException;
@@ -54,17 +55,33 @@ public class ProfileController {
     }
 
     @PostMapping("/createNistagramUser")
-    public ResponseEntity<String> createUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<ResponseDto> createUser(@RequestBody @Valid UserDto userDto) {
         try {
             loggerService.logCreateUser(userDto.getUsername());
             userService.saveUser(modelMapper.map(userDto, NistagramUser.class));
             loggerService.logCreateUserSuccess(userDto.getUsername());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDto(true, ""), HttpStatus.OK);
         } catch (UsernameAlreadyExistsException e) {
             loggerService.logCreateUserFailed(userDto.getUsername(), e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseDto(false, e.getMessage()), HttpStatus.OK);
         } catch (Exception e) {
             loggerService.logCreateUserFailed(userDto.getUsername(), e.getMessage());
+            return new ResponseEntity<>(new ResponseDto(false,"Something went wrong."), HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/deleteNistagramUser")
+    public ResponseEntity<String> deleteUser(@RequestBody @Valid UserDto userDto) {
+        try {
+            loggerService.logCreateUserReverted(userDto.getUsername());
+            userService.deleteUser(modelMapper.map(userDto, NistagramUser.class));
+            loggerService.logCreateUserRevertedSuccess(userDto.getUsername());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (UsernameAlreadyExistsException e) {
+            loggerService.logCreateUserRevertedFail(userDto.getUsername(), e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            loggerService.logCreateUserRevertedFail(userDto.getUsername(), e.getMessage());
             return new ResponseEntity<>("Something went wrong.", HttpStatus.OK);
         }
     }
