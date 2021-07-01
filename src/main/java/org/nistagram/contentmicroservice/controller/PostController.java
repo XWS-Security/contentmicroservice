@@ -2,6 +2,7 @@ package org.nistagram.contentmicroservice.controller;
 
 import org.nistagram.contentmicroservice.data.dto.*;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.User;
 import org.nistagram.contentmicroservice.exceptions.AccessToUserProfileDeniedException;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
@@ -84,6 +85,16 @@ public class PostController {
     public ResponseEntity<PostsUserDto> getPostsUser(@PathVariable("id") @Min(1L) Long id) {
         try {
             var post = postService.getPostsUser(id);
+            return ResponseEntity.ok().body(post);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("user")
+    public ResponseEntity<List<PostImageLinkDto>> getUsersPosts() {
+        try {
+            var post = postService.getUsersPosts();
             return ResponseEntity.ok().body(post);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

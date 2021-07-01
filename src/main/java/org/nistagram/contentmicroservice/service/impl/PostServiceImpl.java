@@ -1,18 +1,16 @@
 package org.nistagram.contentmicroservice.service.impl;
 
-import org.nistagram.contentmicroservice.data.dto.CommentDto;
-import org.nistagram.contentmicroservice.data.dto.CreatePostDto;
-import org.nistagram.contentmicroservice.data.dto.LocationDto;
-import org.nistagram.contentmicroservice.data.dto.PostDto;
-import org.nistagram.contentmicroservice.data.dto.PostsUserDto;
+import org.nistagram.contentmicroservice.data.dto.*;
 import org.nistagram.contentmicroservice.data.model.Location;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.Report;
+import org.nistagram.contentmicroservice.data.model.User;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.*;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.PostDoesNotExistException;
+import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -157,11 +155,30 @@ public class PostServiceImpl implements IPostService {
         postRepository.deleteById(postId);
     }
 
+    @Override
+    public List<PostImageLinkDto> getUsersPosts() {
+        NistagramUser user = getCurrentlyLoggedUser();
+        List<Post> posts = postRepository.findAllByUserId(user.getId());
+        List<PostImageLinkDto> dtos = new ArrayList<>();
+        posts.forEach(post -> {
+            dtos.add(new PostImageLinkDto(post.getPaths()[0], post.getId(), user.getUsername(), user.getProfilePictureName()));
+        });
+        return dtos;
+    }
+
     Post getPost(long postId) {
         Optional<Post> post = postRepository.findById(postId);
         if (post.isEmpty()) {
             throw new PostDoesNotExistException(postId);
         }
         return post.get();
+    }
+
+    private NistagramUser getCurrentlyLoggedUser() {
+        var object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (object instanceof NistagramUser) {
+            return (NistagramUser) object;
+        }
+        throw new UserNotLogged();
     }
 }
