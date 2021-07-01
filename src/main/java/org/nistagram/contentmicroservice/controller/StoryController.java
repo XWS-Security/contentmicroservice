@@ -133,7 +133,7 @@ public class StoryController {
 
     private NistagramUser getCurrentlyLoggedUser() {
         var object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (NistagramUser.class.isInstance(object)) {
+        if (object instanceof NistagramUser) {
             return (NistagramUser) object;
         }
         throw new UserNotLogged();

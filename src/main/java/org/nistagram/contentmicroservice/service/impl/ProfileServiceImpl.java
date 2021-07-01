@@ -33,7 +33,7 @@ public class ProfileServiceImpl implements IProfileService {
         this.imageService = imageService;
     }
 
-    private List<ProfileImageDto> getPathsOfFirstImagesInPosts(NistagramUser user) {
+    private List<ProfileImageDto> getNamesOfFirstImagesInPosts(NistagramUser user) {
 
         var posts = user.getPosts();
         var paths = new ArrayList<ProfileImageDto>();
@@ -54,7 +54,7 @@ public class ProfileServiceImpl implements IProfileService {
             hasStories = true;
         }
         var hasHighlights = stories.stream().anyMatch(Story::isHighlights);
-        return new ProfileInfoDto(getPathsOfFirstImagesInPosts(user), user.getAbout(), user.getProfilePictureName(), hasStories, hasHighlights);
+        return new ProfileInfoDto(getNamesOfFirstImagesInPosts(user), user.getAbout(), user.getProfilePictureName(), hasStories, hasHighlights);
     }
 
     @Override

@@ -20,4 +20,6 @@ public interface IPostService {
     List<LocationDto> getAllLocations();
 
     void removePost(Long postId);
+
+    List<PostImageLinkDto> getUsersPosts();
 }
