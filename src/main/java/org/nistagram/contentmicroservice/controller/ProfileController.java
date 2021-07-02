@@ -66,7 +66,7 @@ public class ProfileController {
             return new ResponseEntity<>(new ResponseDto(false, e.getMessage()), HttpStatus.OK);
         } catch (Exception e) {
             loggerService.logCreateUserFailed(userDto.getUsername(), e.getMessage());
-            return new ResponseEntity<>(new ResponseDto(false,"Something went wrong."), HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDto(false, "Something went wrong."), HttpStatus.OK);
         }
     }
 
@@ -98,18 +98,18 @@ public class ProfileController {
     }
 
     @PutMapping("/updateUser")
-    public ResponseEntity<String> updateUser(@RequestBody @Valid EditUserDto editUserDto) {
+    public ResponseEntity<ResponseDto> updateUser(@RequestBody @Valid EditUserDto editUserDto) {
         try {
             loggerService.logUpdateUser(editUserDto.getUsername());
             userService.updateUser(editUserDto);
             loggerService.logUpdateUserSuccess(editUserDto.getUsername());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDto(true, ""), HttpStatus.OK);
         } catch (UsernameAlreadyExistsException | UserDoesNotExistException e) {
             loggerService.logCreateUserFailed(editUserDto.getUsername(), e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseDto(false, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             loggerService.logCreateUserFailed(editUserDto.getUsername(), e.getMessage());
-            return new ResponseEntity<>("Something went wrong.", HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseDto(false, "Something went wrong."), HttpStatus.OK);
         }
     }
 
