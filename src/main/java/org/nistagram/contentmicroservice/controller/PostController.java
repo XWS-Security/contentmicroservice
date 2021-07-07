@@ -2,7 +2,6 @@ package org.nistagram.contentmicroservice.controller;
 
 import org.nistagram.contentmicroservice.data.dto.*;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
-import org.nistagram.contentmicroservice.data.model.User;
 import org.nistagram.contentmicroservice.exceptions.AccessToUserProfileDeniedException;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
@@ -11,7 +10,6 @@ import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.security.TokenUtils;
 import org.nistagram.contentmicroservice.service.IPostService;
 import org.nistagram.contentmicroservice.service.PostReactionService;
-import org.nistagram.contentmicroservice.util.Constants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @RestController

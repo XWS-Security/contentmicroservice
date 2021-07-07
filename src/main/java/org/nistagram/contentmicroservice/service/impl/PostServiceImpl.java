@@ -3,8 +3,6 @@ package org.nistagram.contentmicroservice.service.impl;
 import org.nistagram.contentmicroservice.data.dto.*;
 import org.nistagram.contentmicroservice.data.model.Location;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
-import org.nistagram.contentmicroservice.data.model.Report;
-import org.nistagram.contentmicroservice.data.model.User;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.*;
@@ -22,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
