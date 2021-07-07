@@ -1,6 +1,5 @@
 package org.nistagram.contentmicroservice.controller;
 
-import org.nistagram.contentmicroservice.exceptions.BadFileTypeException;
 import org.nistagram.contentmicroservice.logging.LoggerService;
 import org.nistagram.contentmicroservice.logging.LoggerServiceImpl;
 import org.nistagram.contentmicroservice.service.IImageService;

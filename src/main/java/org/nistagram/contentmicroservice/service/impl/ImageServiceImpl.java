@@ -63,10 +63,7 @@ public class ImageServiceImpl implements IImageService {
     public static boolean isImageFile(File file) throws IOException {
         try {
             Image image = ImageIO.read(file);
-            if (image != null) {
-                return true;
-            }
-            return false;
+            return image != null;
         } catch (IOException e) {
             throw e;
         }

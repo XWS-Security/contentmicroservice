@@ -83,6 +83,9 @@ INSERT INTO public.content(
     content_type, id, date, tags, about, paths, highlights, only_close_friends, path, location_id, user_id)
     VALUES ('POST', '6', '2017-10-01 21:58:58.508-07', '{#VSCO, #BALKAN}', 'Vscoooo', '{image10.jpg}', null, null, null, 1, 1);
 
+INSERT INTO content(content_type, id, date, tags, highlights, only_close_friends, path, location_id, user_id)
+	VALUES ('STORY', 7, '2021-07-07 10:00:00.508-07', '{#BFF, #FATCAT}', true, false, 'image11.jpg', null, 1);
+
 INSERT INTO public.comment(id, date, text, user_id, post_id) VALUES (1, '2017-10-01 21:58:58.508-07', 'Lepasi', 2, 1);
 INSERT INTO public.comment(id, date, text, user_id, post_id) VALUES (2, '2017-10-01 21:58:58.508-07', 'Lepasi', 3, 1);
 INSERT INTO public.comment(id, date, text, user_id, post_id) VALUES (3, '2017-10-01 21:58:58.508-07', 'Lepasi', 4, 1);
