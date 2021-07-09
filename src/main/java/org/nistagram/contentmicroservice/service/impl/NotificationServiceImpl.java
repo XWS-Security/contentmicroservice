@@ -6,12 +6,14 @@ import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.Notification;
 import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.data.repository.NotificationRepository;
+import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -61,8 +63,24 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void seen(NotificationSeenDto notificationSeenDto) {
-        Notification notification = notificationRepository.findById(notificationSeenDto.getNotificationId()).get();
+        var optional = notificationRepository.findById(notificationSeenDto.getNotificationId());
+        if (optional.isEmpty()) return;
+        var notification = optional.get();
         notification.setSeen(true);
         notificationRepository.save(notification);
+    }
+
+    @Override
+    public List<Notification> getAll() {
+        NistagramUser user = getCurrentlyLoggedUser();
+        return notificationRepository.findByUser(user.getId());
+    }
+
+    private NistagramUser getCurrentlyLoggedUser() {
+        var object = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (object instanceof NistagramUser) {
+            return (NistagramUser) object;
+        }
+        throw new UserNotLogged();
     }
 }

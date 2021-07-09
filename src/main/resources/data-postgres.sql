@@ -99,3 +99,12 @@ INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (4, 
 INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (5, 4);
 INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (1, 4);
 INSERT INTO public.user_subscribed_user(user_id, subscribed_user_id) VALUES (6, 2);
+
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (1, 0, false, 1, 2, 1);
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (2, 1, false, 1, 2, 1);
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (3, 1, true, 1, 3, 1);
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (4, 2, true, 1, 1, 4);
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (5, 2, true, 2, 1, 4);
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (6, 2, false, 3, 1, 4);
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (7, 2, false, 4, 1, 4);
+INSERT INTO notification (id, type, seen, content_id, caused_user_id, user_id) VALUES (8, 2, false, 5, 1, 4);
