@@ -70,6 +70,16 @@ public class StoryController {
         }
     }
 
+    @GetMapping("/specific/{id}")
+    public ResponseEntity<StoryDto> getHighlights(@PathVariable Long id) {
+        try {
+            StoryDto storie = storyService.getSpecificStory(id);
+            return ResponseEntity.ok().body(storie);
+        } catch (NotFoundException e) {
+            loggerService.getStoriesFailed(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping("/highlights/{username}")
     public ResponseEntity<List<StoryDto>> getHighlights(@PathVariable String username) {

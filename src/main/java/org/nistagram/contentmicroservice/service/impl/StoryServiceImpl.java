@@ -10,6 +10,7 @@ import org.nistagram.contentmicroservice.data.repository.ContentRepository;
 import org.nistagram.contentmicroservice.data.repository.LocationRepository;
 import org.nistagram.contentmicroservice.data.repository.StoryRepository;
 import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
+import org.nistagram.contentmicroservice.exceptions.NotFoundException;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.IStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,6 +139,18 @@ public class StoryServiceImpl implements IStoryService {
     @Override
     public void removeStory(Long storyId) {
         storyRepository.deleteById(storyId);
+    }
+
+    @Override
+    public StoryDto getSpecificStory(Long id) {
+        var optional = storyRepository.findById(id);
+        if(optional.isEmpty()) throw new NotFoundException(id);
+        var story = optional.get();
+        var location = story.getLocation();
+        var locationDto = (location == null) ? null :
+                new LocationDto(location.getId(), location.getName());
+        var taggedUsers = story.getTaggedUsers().stream().map(NistagramUser::getUsername).collect(Collectors.toList());
+        return new StoryDto(story.getId(), story.getPath(), locationDto, story.getTagsList(), story.getDate(), taggedUsers);
     }
 
     private boolean passed24Hours(Date date) {
