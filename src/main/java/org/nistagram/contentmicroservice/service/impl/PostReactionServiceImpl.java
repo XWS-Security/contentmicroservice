@@ -3,13 +3,19 @@ package org.nistagram.contentmicroservice.service.impl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import org.nistagram.contentmicroservice.data.dto.*;
+import org.nistagram.contentmicroservice.data.dto.FollowRequestAccessResponseDto;
+import org.nistagram.contentmicroservice.data.dto.PostImageLinkDto;
+import org.nistagram.contentmicroservice.data.dto.UploadCommentDto;
+import org.nistagram.contentmicroservice.data.enums.NotificationType;
+import org.nistagram.contentmicroservice.data.enums.Notifications;
 import org.nistagram.contentmicroservice.data.model.Comment;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.Notification;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.CommentRepository;
-import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
+import org.nistagram.contentmicroservice.data.repository.NotificationRepository;
+import org.nistagram.contentmicroservice.data.repository.PostRepository;
 import org.nistagram.contentmicroservice.exceptions.AccessToUserProfileDeniedException;
 import org.nistagram.contentmicroservice.exceptions.PostDoesNotExistException;
 import org.nistagram.contentmicroservice.service.PostReactionService;
@@ -31,14 +37,16 @@ public class PostReactionServiceImpl implements PostReactionService {
     private final PostRepository postRepository;
     private final NistagramUserRepository nistagramUserRepository;
     private final CommentRepository commentRepository;
+    private final NotificationRepository notificationRepository;
 
     @Value("${FOLLOWER}")
     private String followerMicroserviceURI;
 
-    public PostReactionServiceImpl(PostRepository postRepository, NistagramUserRepository nistagramUserRepository, CommentRepository commentRepository) {
+    public PostReactionServiceImpl(PostRepository postRepository, NistagramUserRepository nistagramUserRepository, CommentRepository commentRepository, NotificationRepository notificationRepository) {
         this.postRepository = postRepository;
         this.nistagramUserRepository = nistagramUserRepository;
         this.commentRepository = commentRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @Override
@@ -52,6 +60,12 @@ public class PostReactionServiceImpl implements PostReactionService {
         comments.add(comment);
         post.setComments(comments);
         commentRepository.save(comment);
+
+        Notification notification = new Notification(NotificationType.COMMENT, post, getCurrentlyLoggedUser(), false);
+        notificationRepository.save(notification);
+        owner.getNotifications().add(notification);
+
+        nistagramUserRepository.save(owner);
         postRepository.save(post);
     }
 
@@ -72,6 +86,13 @@ public class PostReactionServiceImpl implements PostReactionService {
             post.setLikes(likes);
         }
 
+        if (owner.getNotificationLikes().equals(Notifications.ON)) {
+            Notification notification = new Notification(NotificationType.REACT, post, user, false);
+            notificationRepository.save(notification);
+            owner.getNotifications().add(notification);
+        }
+
+        nistagramUserRepository.save(owner);
         postRepository.save(post);
     }
 
@@ -92,6 +113,13 @@ public class PostReactionServiceImpl implements PostReactionService {
             post.setDislikes(dislikes);
         }
 
+        if (owner.getNotificationLikes().equals(Notifications.ON)) {
+            Notification notification = new Notification(NotificationType.REACT, post, user, false);
+            notificationRepository.save(notification);
+            owner.getNotifications().add(notification);
+        }
+
+        nistagramUserRepository.save(owner);
         postRepository.save(post);
     }
 

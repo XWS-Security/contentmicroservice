@@ -155,6 +155,7 @@ public class PostController {
             loggerService.logLikeFailed(dto.getPostId(), e.getMessage());
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
+            e.printStackTrace();
             loggerService.logLikeFailed(dto.getPostId(), e.getMessage());
             return new ResponseEntity<>("Something went wrong", HttpStatus.BAD_REQUEST);
         }
