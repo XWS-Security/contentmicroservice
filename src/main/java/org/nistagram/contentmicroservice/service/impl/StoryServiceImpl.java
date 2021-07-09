@@ -3,14 +3,13 @@ package org.nistagram.contentmicroservice.service.impl;
 import org.nistagram.contentmicroservice.data.dto.CreateStoryDto;
 import org.nistagram.contentmicroservice.data.dto.LocationDto;
 import org.nistagram.contentmicroservice.data.dto.StoryDto;
+import org.nistagram.contentmicroservice.data.enums.NotificationType;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.Notification;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Story;
-import org.nistagram.contentmicroservice.data.repository.ContentRepository;
-import org.nistagram.contentmicroservice.data.repository.LocationRepository;
-import org.nistagram.contentmicroservice.data.repository.StoryRepository;
-import org.nistagram.contentmicroservice.data.repository.NistagramUserRepository;
 import org.nistagram.contentmicroservice.exceptions.NotFoundException;
+import org.nistagram.contentmicroservice.data.repository.*;
 import org.nistagram.contentmicroservice.exceptions.UserNotLogged;
 import org.nistagram.contentmicroservice.service.IStoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,16 +32,18 @@ public class StoryServiceImpl implements IStoryService {
     private final LocationRepository locationRepository;
     private static final long DAY_IN_MILLISECONDS = 86400000L;
     private final StoryRepository storyRepository;
+    private final NotificationRepository notificationRepository;
     private final ContentRepository contentRepository;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
     @Autowired
-    public StoryServiceImpl(NistagramUserRepository nistagramUserRepository, LocationRepository locationRepository, StoryRepository storyRepository, ContentRepository contentRepository) {
+    public StoryServiceImpl(NistagramUserRepository nistagramUserRepository, LocationRepository locationRepository, StoryRepository storyRepository, NotificationRepository notificationRepository, ContentRepository contentRepository) {
         this.nistagramUserRepository = nistagramUserRepository;
         this.locationRepository = locationRepository;
         this.storyRepository = storyRepository;
+        this.notificationRepository = notificationRepository;
         this.contentRepository = contentRepository;
     }
 
@@ -123,6 +123,18 @@ public class StoryServiceImpl implements IStoryService {
         List<Content> userContent = contentRepository.findAllByUserId(user.getId());
         userContent.add(story);
         user.setContent(userContent);
+
+        ArrayList<NistagramUser> allUsers = (ArrayList<NistagramUser>) nistagramUserRepository.findAll();
+        allUsers.forEach(nistagramUser -> {
+            ArrayList<NistagramUser> nistagramUsersContent = (ArrayList<NistagramUser>) nistagramUserRepository.getContentUsers(nistagramUser.getId());
+            if(nistagramUsersContent.contains(user)) {
+                Notification notification = new Notification(NotificationType.CONTENT, story, user, false);
+                notificationRepository.save(notification);
+                nistagramUser.getNotifications().add(notification);
+                nistagramUserRepository.save(nistagramUser);
+            }
+        });
+
         nistagramUserRepository.save(user);
     }
 

@@ -1,8 +1,10 @@
 package org.nistagram.contentmicroservice.service.impl;
 
 import org.nistagram.contentmicroservice.data.dto.*;
+import org.nistagram.contentmicroservice.data.enums.NotificationType;
 import org.nistagram.contentmicroservice.data.model.Location;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
+import org.nistagram.contentmicroservice.data.model.Notification;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
 import org.nistagram.contentmicroservice.data.repository.*;
@@ -30,18 +32,20 @@ public class PostServiceImpl implements IPostService {
     private final NistagramUserRepository nistagramUserRepository;
     private final LocationRepository locationRepository;
     private final ContentRepository contentRepository;
+    private final NotificationRepository notificationRepository;
     private final ReportRepository reportRepository;
 
     @Value("${PROJECT_PATH}")
     private String project_path;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, NistagramUserRepository nistagramUserRepository, ContentRepository contentRepository, ReportRepository reportRepository) {
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository, LocationRepository locationRepository, NistagramUserRepository nistagramUserRepository, ContentRepository contentRepository, NotificationRepository notificationRepository, ReportRepository reportRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
         this.locationRepository = locationRepository;
         this.nistagramUserRepository = nistagramUserRepository;
         this.contentRepository = contentRepository;
+        this.notificationRepository = notificationRepository;
         this.reportRepository = reportRepository;
     }
 
@@ -125,13 +129,24 @@ public class PostServiceImpl implements IPostService {
             }
         }
         post.setTaggedUsers(taggedUsers);
-
         postRepository.save(post);
 
         NistagramUser user = (NistagramUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Content> userContent = contentRepository.findAllByUserId(user.getId());
         userContent.add(post);
         user.setContent(userContent);
+
+        ArrayList<NistagramUser> allUsers = (ArrayList<NistagramUser>) nistagramUserRepository.findAll();
+        allUsers.forEach(nistagramUser -> {
+            ArrayList<NistagramUser> nistagramUsersContent = (ArrayList<NistagramUser>) nistagramUserRepository.getContentUsers(nistagramUser.getId());
+            if(nistagramUsersContent.contains(user)) {
+                Notification notification = new Notification(NotificationType.CONTENT, post, user, false);
+                notificationRepository.save(notification);
+                nistagramUser.getNotifications().add(notification);
+                nistagramUserRepository.save(nistagramUser);
+            }
+        });
+
         nistagramUserRepository.save(user);
     }
 
