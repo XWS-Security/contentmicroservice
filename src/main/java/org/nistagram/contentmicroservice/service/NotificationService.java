@@ -2,6 +2,9 @@ package org.nistagram.contentmicroservice.service;
 
 import org.nistagram.contentmicroservice.data.dto.NotificationDto;
 import org.nistagram.contentmicroservice.data.dto.NotificationSeenDto;
+import org.nistagram.contentmicroservice.data.model.Notification;
+
+import java.util.List;
 
 public interface NotificationService {
 
@@ -14,4 +17,6 @@ public interface NotificationService {
     void removeUserFromContentNotifications(NotificationDto notificationDto);
 
     void seen(NotificationSeenDto notificationSeenDto);
+
+    List<Notification> getAll();
 }
