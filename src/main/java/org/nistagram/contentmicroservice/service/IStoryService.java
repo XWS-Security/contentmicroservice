@@ -17,4 +17,6 @@ public interface IStoryService {
     List<StoryDto> getLoggedUsersStories();
 
     public void removeStory(Long storyId);
+
+    StoryDto getSpecificStory(Long id);
 }
