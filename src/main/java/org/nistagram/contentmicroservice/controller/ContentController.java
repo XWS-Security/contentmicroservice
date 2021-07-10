@@ -1,6 +1,7 @@
 package org.nistagram.contentmicroservice.controller;
 
 import org.nistagram.contentmicroservice.data.dto.ContentMessageInfoDto;
+import org.nistagram.contentmicroservice.data.dto.LikesDislikesCommentsDto;
 import org.nistagram.contentmicroservice.security.TokenUtils;
 import org.nistagram.contentmicroservice.service.ContentService;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,16 @@ public class ContentController {
     public ResponseEntity<ContentMessageInfoDto> getContent(@PathVariable("id") Long id, HttpServletRequest request) {
         try {
             var result = contentService.getContentInfo(id, tokenUtils.getToken(request));
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/basic/{id}")
+    public ResponseEntity<LikesDislikesCommentsDto> getLikesDislikesAndComments(@PathVariable("id") Long id, HttpServletRequest request) {
+        try {
+            LikesDislikesCommentsDto result = contentService.getLikesDislikesAndComments(id);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

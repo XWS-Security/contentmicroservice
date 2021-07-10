@@ -5,6 +5,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.nistagram.contentmicroservice.data.dto.ContentMessageInfoDto;
 import org.nistagram.contentmicroservice.data.dto.FollowRequestAccessResponseDto;
+import org.nistagram.contentmicroservice.data.dto.LikesDislikesCommentsDto;
 import org.nistagram.contentmicroservice.data.model.NistagramUser;
 import org.nistagram.contentmicroservice.data.model.content.Content;
 import org.nistagram.contentmicroservice.data.model.content.Post;
@@ -52,6 +53,19 @@ public class ContentServiceImpl implements ContentService {
             contentPath = hasAccess ? ((Story) content).getPath() : "";
         }
         return new ContentMessageInfoDto(owner.getProfilePictureName(), owner.getUsername(), type, hasAccess, contentPath);
+    }
+
+    @Override
+    public LikesDislikesCommentsDto getLikesDislikesAndComments(Long id) {
+        var opt = contentRepository.findById(id);
+        var content = opt.get();
+        if(content instanceof Post){
+            var dislikes =((Post) content).getDislikes().size();
+            var likes =((Post) content).getLikes().size();
+            var comments =((Post) content).getComments().size();
+            return new LikesDislikesCommentsDto(likes, dislikes, comments);
+        }
+        return new LikesDislikesCommentsDto(0,0,0);
     }
 
     private Content findById(long id) {
